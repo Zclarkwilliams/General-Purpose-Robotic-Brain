@@ -7,9 +7,17 @@ using namespace std;
 //	Non-Standard libraries
 #include "pugixml.hpp"
 
-const int ERROR_FILE_LOAD = -1;
+void error_handler(int err);
 
-typedef struct{
+const int ERROR_FILE_LOAD = -1;
+const int WARNING_ORGANISM_SIZE_MISMATCH = -2;
+const int WARNING_NEURONAL_SIZE_MISMATCH = -3;
+const int WARNING_CONNEXION_SIZE_MISMATCH = -4;
+const int WARNING_SYNAPSE_SPIKING_SIZE_MISMATCH = -5;
+const int WARNING_SYNAPSE_NONSPIKING_SIZE_MISMATCH = -6;
+const int WARNING_SYNAPSE_ELECTRICAL_SIZE_MISMATCH = -7;
+
+typedef struct {
 	const string* name;
 	const string* id;
 	const string* enabled;
@@ -44,7 +52,39 @@ typedef struct {
 	const string* equil;
 	const string* synamp;
 	const string* saturatev;
-} Synapses;
+} SynapsesNonSpiking;
+
+typedef struct {
+	const string* name;
+	const string* id;
+	const string* type;
+	const string* equil;
+	const string* synamp;
+	const string* decay;
+	const string* relfacil;
+	const string* facildecay;
+	const string* voltdep;
+	const string* maxrelcond;
+	const string* satpspot;
+	const string* threshpspot;
+	const string* hebbian;
+	const string* maxaugcond;
+	const string* learninginc;
+	const string* learningtime;
+	const string* allowforget;
+	const string* forgettime;
+	const string* consolidation;
+} SynapsesSpiking;
+
+typedef struct {
+	const string* name;
+	const string* id;
+	const string* type;
+	const string* lowcoup;
+	const string* hicoup;
+	const string* turnonv;
+	const string* saturatev;
+} SynapsesElectrical;
 
 typedef struct {
 	const string* id;
@@ -54,113 +94,122 @@ typedef struct {
 	const string* synapsetypeid;
 	const string* delay;
 	const string* g;
-}Connexions;
+} Connexions;
 
 typedef struct{
 
-	const string* organism_name;
 	const string* organism_id;
-	const string* neuralmodule_name;
+	const string* organism_name;
 	const string* neuralmodule_id;
+	const string* neuralmodule_name;
 
-	/*
-	typedef std::vector<Neurons> neuron;
-	typedef std::vector<Synapses> synapse;
-	typedef std::vector<Connexions> connexion;
-	*/
-	Neurons neuron[100];
-	Synapses synapse[100];
-	Connexions connexion[100];
+	std::vector<Neurons>			neuron;
+	std::vector<Connexions>			connexion;
+	std::vector<SynapsesSpiking>	synapse_spiking;
+	std::vector<SynapsesElectrical> synapse_electrical;
+	std::vector<SynapsesNonSpiking> synapse_nonspiking;
 
-}Organisms;
+} Organisms;
+
 
 int main(){
-	//Organisms orgs;
-	//std::vector<Organisms> organism;
-	//std::vector<vector<Organisms>> neuron;
-	//std::vector<vector<Organisms>> synapse;
-	//std::vector<vector<Organisms>> connexion;
+/*****************************************************************\
+|		Identifiers and declarations -
+\*****************************************************************/
+	//	Identifiers to the specific struct vectors
+	Organisms				orgis;
+	Neurons					neurs;
+	Connexions				conxs;
+	SynapsesSpiking			synspk;
+	SynapsesElectrical		synelec;
+	SynapsesNonSpiking		synnonspk;
 
-	Organisms organism[100];
-
-	const char* filepath = "test_file.asim";
-	//const char*	nodepath = "//Simulation/Environment/Organisms/NervousSystem/NeuralModules";
+	//	Vector of organism sturct
+	std::vector<Organisms>	organism;
 	
+	//	Declare vector of organism structs
+	pugi::xml_node_iterator	organism_child;
+
+	//	Declare vector of neuronal structs
+	pugi::xml_node_iterator neuron_child;
+
+	//	Declare vector of copnnexion structs
+	pugi::xml_node_iterator connexion_child;
+	
+	//	Synapse Nodes (3 types: Spiking, Non-Spiking, Electrical)
+	pugi::xml_node_iterator synapse_elec_child;
+	pugi::xml_node_iterator synapse_spiking_child;
+	pugi::xml_node_iterator synapse_nonspiking_child;
+
+/*****************************************************************\
+|		Variables -
+\*****************************************************************/
 	char exit = 0;
 
+/*****************************************************************\
+|		File load and validate section -
+\*****************************************************************/
+	
+	const char* filepath = "test_file.asim";
+	
 	pugi::xml_document doc;
-
-	pugi::xml_node_iterator neuron_child;
-	pugi::xml_node_iterator organism_child;
-	pugi::xml_node_iterator connexion_child;
-	//	Synapse Nodes (3 types; Spiking, Non-Spiking, Electrical)
-	pugi::xml_node_iterator synapseelec_child;
-	pugi::xml_node_iterator synapsespike_child;
-	pugi::xml_node_iterator synapsenospike_child;
-	
 	pugi::xml_parse_result result = doc.load_file(filepath);
-	if (!result){
-		return  ERROR_FILE_LOAD;
-	}
-	cout << "File " << filepath << " Loaded Sucessfully " << endl << endl;
 	
+	if (!result){
+		error_handler(ERROR_FILE_LOAD);
+	}
+
+	cout << "File " << filepath << " Loaded Sucessfully " << endl << endl;
+
+	/*****************************************************************\
+	|		Organism declaration and path setup -
+	\*****************************************************************/
 	//	Set parent node to start traversing file from
 	pugi::xml_node organism_parent = doc.child("Simulation").child("Environment").child("Organisms");
+	
 	//	Create array object for the iteration and struct array
 	pugi::xml_object_range<pugi::xml_node_iterator> organismlist = organism_parent.children();
 
+	//	Generate organim counter for length of vector of structs
 	unsigned int numOrganisms = 0;
+
+	//	Generate for loop to store organism in each
 	for (organism_child = organismlist.begin(); organism_child != organismlist.end(); organism_child++)
 	{
 		//	Push back new organism created with default constructor
-		//organism.push_back(Organisms());
+		organism.push_back(orgis);
 
-		//	Get the Name of the Organism
-		organism[numOrganisms].organism_name = (const string*)organism_parent.child("Organsim").child("Name").text().as_string();
-		organism[numOrganisms].organism_id = (const string*)organism_parent.child("Organsim").child("ID").text().get();
-		//cout << "Organism Name: " << organism[numOrganisms].organism_name << "\nOrganism ID: " << organism[numOrganisms].organism_id << endl;
-
-		/*************************************************************************************************************************************\
+		/**********************************************************************************************************************************************************\
 		|
-		|		Neuron Section - 
+		|	Organism Section -
 		|
-		\*************************************************************************************************************************************/
-		//neuron.push_back(orgs());
+		\**********************************************************************************************************************************************************/
+		organism[numOrganisms].organism_name	= (const string*)organism_parent.child("Organsim").child("Name").text().get();
+		organism[numOrganisms].organism_id		= (const string*)organism_parent.child("Organsim").child("ID").text().get();
+		/*
+		cout << "\tll:\t" << (const string*)organism_parent.child("Organsim").child("Name").text().get() << endl;
+		cout << "\t" << &organism[numOrganisms].organism_name << endl;
+		*/
 		pugi::xml_node neuralModule = (*organism_child).child("NervousSystem").child("NeuralModules").child("NeuralModule");
+
+		/**********************************************************************************************************************************************************\
+		|
+		|		Neuron Section -
+		|	
+		\**********************************************************************************************************************************************************/
+		//	Set a list to be generated on the neuron identified by the "Neurons.Neuron" name in the xml config file
 		pugi::xml_object_range<pugi::xml_node_iterator> neuronlist = neuralModule.child("Neurons").children();
 		
+		//	Generate neuron counter for length of vector of structs
 		unsigned int numNeurons = 0;
+		
+		//	Generate for loop to store neurons in each organism
 		for (neuron_child = neuronlist.begin(); neuron_child != neuronlist.end(); neuron_child++){
-			/*
-			cout << "Name: "					<< (*neuron_child).child("Name").child_value()				<< endl;
-			cout << "\tID: "					<< (*neuron_child).child("ID").child_value() 				<< endl;
-			cout << "\tEnabled: "				<< (*neuron_child).child("Enabled").child_value() 			<< endl;
-			cout << "\tTonic Stimulus: "		<< (*neuron_child).child("TonicStimulus").child_value() 	<< endl;
-			cout << "\tNoise: "					<< (*neuron_child).child("Noise").child_value() 			<< endl;
-			cout << "\tResting potential: "		<< (*neuron_child).child("RestingPot").child_value()		<< endl;
-			cout << "\tSize: "					<< (*neuron_child).child("Size").child_value() 				<< endl;
-			cout << "\tTime Const: "			<< (*neuron_child).child("TimeConst").child_value() 		<< endl;
-			cout << "\tInitial threshold: "		<< (*neuron_child).child("InitialThresh").child_value()		<< endl;		
-			cout << "\tRelative Accom: "		<< (*neuron_child).child("RelativeAccom").child_value() 	<< endl;
-			cout << "\tAccom Time Const: "		<< (*neuron_child).child("AccomTimeConst").child_value()	<< endl;
-			cout << "\tAHP Amp: "				<< (*neuron_child).child("AHPAmp").child_value() 			<< endl;
-			cout << "\tAHP Time Const: "		<< (*neuron_child).child("AHPTimeConst").child_value() 		<< endl;
-			cout << "\tGMaxCa: "				<< (*neuron_child).child("GMaxCa").child_value() 			<< endl;
-			cout << "\tBurst Init At Bottom: "	<< (*neuron_child).child("BurstInitAtBottom").child_value()	<< endl;
-			cout << "\t" << (*neuron_child).child("CaActivation").name() << endl;
-			cout << "\t\tID: "					<< (*neuron_child).child("CaActivation").child("ID").child_value()				<< endl;
-			cout << "\t\tMidpoint: "			<< (*neuron_child).child("CaActivation").child("MidPoint").child_value()		<< endl;
-			cout << "\t\tSlope: "				<< (*neuron_child).child("CaActivation").child("Slope").child_value()			<< endl;
-			cout << "\t\tTime Constant: "		<< (*neuron_child).child("CaActivation").child("TimeConstant").child_value()	<< endl;
-			cout << "\t\tActivation Type: "		<< (*neuron_child).child("CaActivation").child("ActivationType").child_value()	<< endl;
-			cout << "\t" << (*neuron_child).child("CaDeactivation").name() << endl;
-			cout << "\t\tID: "					<< (*neuron_child).child("CaDeactivation").child("ID").child_value()				<< endl;
-			cout << "\t\tMidpoint: "			<< (*neuron_child).child("CaDeactivation").child("MidPoint").child_value()			<< endl;
-			cout << "\t\tSlope: "				<< (*neuron_child).child("CaDeactivation").child("Slope").child_value()				<< endl;
-			cout << "\t\tTime Constant: "		<< (*neuron_child).child("CaDeactivation").child("TimeConstant").child_value()		<< endl;
-			cout << "\t\tActivation Type: "		<< (*neuron_child).child("CaDeactivation").child("ActivationType").child_value()	<< endl;
-			cout << "}" << endl;
-			*/
+			
+			//	Make room for the new member struct by pushing the vector
+			organism[numOrganisms].neuron.push_back(neurs);
+
+			//	Load data to struct vector
 			organism[numOrganisms].neuron[numNeurons].name						= (const string*)(*neuron_child).child("Name").text().get();
 			organism[numOrganisms].neuron[numNeurons].id						= (const string*)(*neuron_child).child("ID").text().get();
 			organism[numOrganisms].neuron[numNeurons].enabled					= (const string*)(*neuron_child).child("Enabled").text().get();
@@ -190,99 +239,171 @@ int main(){
 		}
 		cout << "total number of neurons: " << numNeurons << endl;
 
-		/*************************************************************************************************************************************\
+		/**********************************************************************************************************************************************************\
 		|
 		|		Synapse Section - Spiking / Non-spiking / Electrical
 		|			**The spiking and electrical synapses have been commented out because we are not utilizing them in Rev.A.1.
-		\*************************************************************************************************************************************/
-		// Synapse Node
-		pugi::xml_node Synapses = neuralModule.child("Synapse");
+		|
+		\**********************************************************************************************************************************************************/
+		// Synapse node to be used accross all 3 synapse types
+		pugi::xml_node Synapses = neuralModule.child("Synapses");
 
-		//	Non-Spiking Synapses
-		pugi::xml_object_range<pugi::xml_node_iterator> synapselist_nonspiking = Synapses.child("NonSpikingSynapses").child("SynapseType").children();
-		unsigned int numNonSpikeSynapses = 0;
-		for (synapsenospike_child = synapselist_nonspiking.begin(); synapsenospike_child != synapselist_nonspiking.end(); synapsenospike_child++){
+		/**********************************************************************************************************************************************************\
+		|***************************************************************	Spiking Synapses		***************************************************************|
+		\**********************************************************************************************************************************************************/
+		//	Child of the synapse, spiking or otherwise -> SynapseType
+		pugi::xml_object_range<pugi::xml_node_iterator> synapse_spiking_list = Synapses.child("SpikingSynapses").children();
+
+		//	Generate spiking synapse counter for length of vector of structs
+		unsigned int numSpikingSynapses = 0;
+
+		//	generate for loop to store neuronal spiking synapse in each organism
+		for (synapse_spiking_child = synapse_spiking_list.begin(); synapse_spiking_child != synapse_spiking_list.end(); synapse_spiking_child++){
+
+			//	Make room for the new member struct by pushing the vector
+			organism[numOrganisms].synapse_spiking.push_back(synspk);
+
 			/*
-			cout << "Name: "		<< (*synapsenospike_child).child("Name").child_value()		<< endl;
-			cout << "\tID: "		<< (*synapsenospike_child).child("ID").child_value()		<< endl;
-			cout << "\tType: "		<< (*synapsenospike_child).child("Type").child_value()		<< endl;
-			cout << "\tEquil: "		<< (*synapsenospike_child).child("Equil").child_value()		<< endl;
-			cout << "\tSynAmp: "	<< (*synapsenospike_child).child("SynAmp").child_value()	<< endl;
-			cout << "\tSat. V: "	<< (*synapsenospike_child).child("SaturateV").child_value()	<< endl;
-			cout << "}" << endl;
+			cout << "Name: "			<< (*synapse_spiking_child).child("Name").child_value()				<< endl;
+			cout << "\tID: "			<< (*synapse_spiking_child).child("ID").child_value()				<< endl;
+			cout << "\tType: "			<< (*synapse_spiking_child).child("Type").child_value()				<< endl;
+			cout << "\tEquil: "			<< (*synapse_spiking_child).child("Equil").child_value()			<< endl;
+			cout << "\tSyn Amp: "		<< (*synapse_spiking_child).child("SynAmp").child_value()			<< endl;
+			cout << "\tDecay: "			<< (*synapse_spiking_child).child("Decay").child_value()			<< endl;
+			cout << "\tRel Facil: "		<< (*synapse_spiking_child).child("RelFacil").child_value()			<< endl;
+			cout << "\tFacil Decay: "	<< (*synapse_spiking_child).child("FacilDecay").child_value()		<< endl;
+			cout << "\tVolt Dep: "		<< (*synapse_spiking_child).child("VoltDep").child_value()			<< endl;
+			cout << "\tMax Rel Cond: "	<< (*synapse_spiking_child).child("MaxRelCond").child_value()		<< endl;
+			cout << "\tSat PS Pot: "	<< (*synapse_spiking_child).child("SatPSPot").child_value()			<< endl;
+			cout << "\tThresh PS Pot: "	<< (*synapse_spiking_child).child("ThreshPSPot").child_value()		<< endl;
+			cout << "\tHebbian: "		<< (*synapse_spiking_child).child("Hebbian").child_value()			<< endl;
+			cout << "\tMax Aug Cond: "	<< (*synapse_spiking_child).child("MaxAugCond").child_value()		<< endl;
+			cout << "\tLearning Inc: "	<< (*synapse_spiking_child).child("LearningInc").child_value()		<< endl;
+			cout << "\tLearning Time: "	<< (*synapse_spiking_child).child("LearningTime").child_value()		<< endl;
+			cout << "\tAllow Forget: "	<< (*synapse_spiking_child).child("AllowForget").child_value()		<< endl;
+			cout << "\tForget Time: "	<< (*synapse_spiking_child).child("ForgetTime").child_value()		<< endl;
+			cout << "\tConsolidation: "	<< (*synapse_spiking_child).child("Consolidation").child_value()	<< endl;
 			*/
-			organism[numOrganisms].synapse[numNonSpikeSynapses].name		= (const string*)(*synapsenospike_child).child("Name").text().get();
-			organism[numOrganisms].synapse[numNonSpikeSynapses].id			= (const string*)(*synapsenospike_child).child("ID").text().get();
-			organism[numOrganisms].synapse[numNonSpikeSynapses].type		= (const string*)(*synapsenospike_child).child("Type").text().get();
-			organism[numOrganisms].synapse[numNonSpikeSynapses].equil		= (const string*)(*synapsenospike_child).child("Equil").text().get();
-			organism[numOrganisms].synapse[numNonSpikeSynapses].synamp		= (const string*)(*synapsenospike_child).child("SynAmp").text().get();
-			organism[numOrganisms].synapse[numNonSpikeSynapses].saturatev	= (const string*)(*synapsenospike_child).child("SaturateV").text().get();
+
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].name				= (const string*)(*synapse_spiking_child).child("Name").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].id				= (const string*)(*synapse_spiking_child).child("ID").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].type				= (const string*)(*synapse_spiking_child).child("Type").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].equil			= (const string*)(*synapse_spiking_child).child("Equil").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].synamp			= (const string*)(*synapse_spiking_child).child("SynAmp").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].decay			= (const string*)(*synapse_spiking_child).child("Decay").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].relfacil			= (const string*)(*synapse_spiking_child).child("RelFacil").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].facildecay		= (const string*)(*synapse_spiking_child).child("FacilDecay").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].voltdep			= (const string*)(*synapse_spiking_child).child("VoltDep").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxrelcond		= (const string*)(*synapse_spiking_child).child("MaxRelCond").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].satpspot			= (const string*)(*synapse_spiking_child).child("SatPSPot").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].threshpspot		= (const string*)(*synapse_spiking_child).child("ThreshPSPot").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].hebbian			= (const string*)(*synapse_spiking_child).child("Hebbian").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxaugcond		= (const string*)(*synapse_spiking_child).child("MaxAugCond").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learninginc		= (const string*)(*synapse_spiking_child).child("LearningInc").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learningtime		= (const string*)(*synapse_spiking_child).child("LearningTime").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].allowforget		= (const string*)(*synapse_spiking_child).child("AllowForget").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].forgettime		= (const string*)(*synapse_spiking_child).child("ForgetTime").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].consolidation	= (const string*)(*synapse_spiking_child).child("Consolidation").text().get();
+
+			numSpikingSynapses++;
+		}
+		cout << "total number of spiking synapses: " << numSpikingSynapses << endl;
+		
+		/**********************************************************************************************************************************************************\
+		|***************************************************************	Non-Spiking Synapses	***************************************************************|
+		\**********************************************************************************************************************************************************/
+		pugi::xml_object_range<pugi::xml_node_iterator> synapse_nonspiking_list = Synapses.child("NonSpikingSynapses").children();
+		
+		//	Generate nonspiking synapse counter for length of vector of structs
+		unsigned int numNonSpikeSynapses = 0;
+
+		//	Generate for loop to store neuronal nonspiking in each organism
+		for (synapse_nonspiking_child = synapse_nonspiking_list.begin(); synapse_nonspiking_child != synapse_nonspiking_list.end(); synapse_nonspiking_child++){
+
+			//	Make room for the new member struct by pushing the vector
+			organism[numOrganisms].synapse_nonspiking.push_back(synnonspk);
+
+			/*
+			cout << "Name: "		<< (*synapse_nonspiking_child).child("Name").child_value()		<< endl;
+			cout << "\tID: "		<< (*synapse_nonspiking_child).child("ID").child_value()		<< endl;
+			cout << "\tType: "		<< (*synapse_nonspiking_child).child("Type").child_value()		<< endl;
+			cout << "\tEquil: "		<< (*synapse_nonspiking_child).child("Equil").child_value()		<< endl;
+			cout << "\tSynAmp: "	<< (*synapse_nonspiking_child).child("SynAmp").child_value()	<< endl;
+			cout << "\tSat. V: "	<< (*synapse_nonspiking_child).child("SaturateV").child_value()	<< endl;
+			*/
+
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].name			= (const string*)(*synapse_nonspiking_child).child("Name").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].id			= (const string*)(*synapse_nonspiking_child).child("ID").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].type			= (const string*)(*synapse_nonspiking_child).child("Type").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].equil		= (const string*)(*synapse_nonspiking_child).child("Equil").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].synamp		= (const string*)(*synapse_nonspiking_child).child("SynAmp").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].saturatev	= (const string*)(*synapse_nonspiking_child).child("SaturateV").text().get();
 			numNonSpikeSynapses++;
 		}
-		//cout << "total number of nonspiking synapses: " << numNonSpikeSynapses << endl;
+		cout << "total number of nonspiking synapses: " << numNonSpikeSynapses << endl;
+
+		/**********************************************************************************************************************************************************\
+		|***************************************************************	Electrical Synapses		***************************************************************|
+		\**********************************************************************************************************************************************************/
+		pugi::xml_object_range<pugi::xml_node_iterator> synapse_elec_list = Synapses.child("ElectricalSynapses").children();
 		
-		/*//	Skiping Synpases
-		pugi::xml_object_range<pugi::xml_node_iterator> synapselist_spiking = Synapses.child("SpikingSynapses").child("SynapseType").children();
-		unsigned int numSpikeSynapses = 0;
-		for (synapsespike_child = synapselist_spiking.begin(); synapsespike_child != synapselist_spiking.end(); synapsespike_child++){
-			cout << "Name: "			<< (*synapsespike_child).child("Name").child_value()			<< endl;
-			cout << "\tID: "			<< (*synapsespike_child).child("ID").child_value()				<< endl;
-			cout << "\tType: "			<< (*synapsespike_child).child("Type").child_value()			<< endl;
-			cout << "\tEquil: "			<< (*synapsespike_child).child("Equil").child_value()			<< endl;
-			cout << "\tSyn Amp: "		<< (*synapsespike_child).child("SynAmp").child_value()			<< endl;
-			cout << "\tDecay: "			<< (*synapsespike_child).child("Decay").child_value()			<< endl;
-			cout << "\tRel Facil: "		<< (*synapsespike_child).child("RelFacil").child_value()		<< endl;
-			cout << "\tFacil Decay: "	<< (*synapsespike_child).child("FacilDecay").child_value()		<< endl;
-			cout << "\tVolt Dep: "		<< (*synapsespike_child).child("VoltDep").child_value()			<< endl;
-			cout << "\tMax Rel Cond: "	<< (*synapsespike_child).child("MaxRelCond").child_value()		<< endl;
-			cout << "\tSat PS Pot: "	<< (*synapsespike_child).child("SatPSPot").child_value()		<< endl;
-			cout << "\tThresh PS Pot: "	<< (*synapsespike_child).child("ThreshPSPot").child_value()		<< endl;
-			cout << "\tHebbian: "		<< (*synapsespike_child).child("Hebbian").child_value()			<< endl;
-			cout << "\tMax Aug Cond: "	<< (*synapsespike_child).child("MaxAugCond").child_value()		<< endl;
-			cout << "\tLearning Inc: "	<< (*synapsespike_child).child("LearningInc").child_value()		<< endl;
-			cout << "\tLearning Time: "	<< (*synapsespike_child).child("LearningTime").child_value()	<< endl;
-			cout << "\tAllow Forget: "	<< (*synapsespike_child).child("AllowForget").child_value()		<< endl;
-			cout << "\tForget Time: "	<< (*synapsespike_child).child("ForgetTime").child_value()		<< endl;
-			cout << "\tConsolidation: "	<< (*synapsespike_child).child("Consolidation").child_value()	<< endl;
-			numSpikeSynapses++;
-		}
-		cout << "total number of spiking synapses: " << numSpikeSynapses << endl;
-		
-		//	Electrical Synpases
-		pugi::xml_object_range<pugi::xml_node_iterator> synapselist_elec = Synapses.child("ElectricalSynapses").child("SynapseType").children();
-		
+		//	Generate electrical synapse counter for length of vector of structs
 		unsigned int numElectricalSynapses = 0;
-		for (synapseelec_child = synapselist_elec.begin(); synapseelec_child != synapselist_elec.end(); synapseelec_child++){
-			cout << "Name: "		<< (*synapseelec_child).child("Name").child_value()			<< endl;
-			cout << "\tID: "			<< (*synapseelec_child).child("ID").child_value()			<< endl;
-			cout << "\tType: "		<< (*synapseelec_child).child("Type").child_value()			<< endl;
-			cout << "\tLow Coup: "	<< (*synapseelec_child).child("LowCoup").child_value()		<< endl;
-			cout << "\tHi Coup: "		<< (*synapseelec_child).child("HiCoup").child_value()		<< endl;
-			cout << "\tTurn On V: "	<< (*synapseelec_child).child("TurnOnV").child_value()		<< endl;
-			cout << "\tSat. V: "		<< (*synapseelec_child).child("SaturateV").child_value()	<< endl;
-			cout << "}" << endl;
+		
+		//	Generate for loop to store neuronal electrical synapse in each organism
+		for (synapse_elec_child = synapse_elec_list.begin(); synapse_elec_child != synapse_elec_list.end(); synapse_elec_child++){
+			
+			//	Make room for the new member struct by pushing the vector
+			organism[numOrganisms].synapse_electrical.push_back(synelec);
+
+			/*
+			cout << "Name: "		<< (*synapse_elec_child).child("Name").child_value()		<< endl;
+			cout << "\tID: "		<< (*synapse_elec_child).child("ID").child_value()			<< endl;
+			cout << "\tType: "		<< (*synapse_elec_child).child("Type").child_value()		<< endl;
+			cout << "\tLow Coup: "	<< (*synapse_elec_child).child("LowCoup").child_value()		<< endl;
+			cout << "\tHi Coup: "	<< (*synapse_elec_child).child("HiCoup").child_value()		<< endl;
+			cout << "\tTurn On V: "	<< (*synapse_elec_child).child("TurnOnV").child_value()		<< endl;
+			cout << "\tSat. V: "	<< (*synapse_elec_child).child("SaturateV").child_value()	<< endl;
+			*/
+
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].name		= (const string*)(*synapse_elec_child).child("Name").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].id			= (const string*)(*synapse_elec_child).child("ID").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].type		= (const string*)(*synapse_elec_child).child("Type").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].lowcoup	= (const string*)(*synapse_elec_child).child("LowCoup").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].hicoup		= (const string*)(*synapse_elec_child).child("HiCoup").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].turnonv	= (const string*)(*synapse_elec_child).child("TurnOnV").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].saturatev	= (const string*)(*synapse_elec_child).child("SaturateV").text().get();
+
 			numElectricalSynapses++;
 		}
 		cout << "total number of electrical synapses: " << numElectricalSynapses << endl;
-		*/
 
 		/*************************************************************************************************************************************\
 		|
-		|		Connexion Section
+		|		Connexion Section - 
 		|
 		\*************************************************************************************************************************************/
-		pugi::xml_object_range<pugi::xml_node_iterator> connecionlist = neuralModule.child("Connexions").children();
+		//	Connexion node to identify each individual instance
+		pugi::xml_object_range<pugi::xml_node_iterator> connexion_list = neuralModule.child("Connexions").children();
+		
+		//	Generate connexion counter for length of vector of structs
 		unsigned int numConnexions = 0;
-		for (connexion_child = connecionlist.begin(); connexion_child != connecionlist.end(); connexion_child++){
+		
+		//	Generate for loop to store neuronal connexions in each organism
+		for (connexion_child = connexion_list.begin(); connexion_child != connexion_list.end(); connexion_child++){
+			
+			//	Make room for the new member struct by pushing the vector
+			organism[numOrganisms].connexion.push_back(conxs);
+
 			/*
-			cout << "Name: "		<< (*synapsenospike_child).child("Name").child_value()		<< endl;
-			cout << "\tID: "		<< (*synapsenospike_child).child("ID").child_value()		<< endl;
-			cout << "\tType: "		<< (*synapsenospike_child).child("Type").child_value()		<< endl;
-			cout << "\tEquil: "		<< (*synapsenospike_child).child("Equil").child_value()		<< endl;
-			cout << "\tSynAmp: "	<< (*synapsenospike_child).child("SynAmp").child_value()	<< endl;
-			cout << "\tSat. V: "	<< (*synapsenospike_child).child("SaturateV").child_value()	<< endl;
-			cout << "}" << endl;
+			cout << "Name: "		<< (*connexion_child).child("Name").child_value()		<< endl;
+			cout << "\tID: "		<< (*connexion_child).child("ID").child_value()			<< endl;
+			cout << "\tType: "		<< (*connexion_child).child("Type").child_value()		<< endl;
+			cout << "\tEquil: "		<< (*connexion_child).child("Equil").child_value()		<< endl;
+			cout << "\tSynAmp: "	<< (*connexion_child).child("SynAmp").child_value()		<< endl;
+			cout << "\tSat. V: "	<< (*connexion_child).child("SaturateV").child_value()	<< endl;
 			*/
+
 			organism[numOrganisms].connexion[numConnexions].id				= (const string*)(*connexion_child).child("ID").text().get();
 			organism[numOrganisms].connexion[numConnexions].sourceid		= (const string*)(*connexion_child).child("SourceID").text().get();
 			organism[numOrganisms].connexion[numConnexions].targetid		= (const string*)(*connexion_child).child("TargetID").text().get();
@@ -290,15 +411,37 @@ int main(){
 			organism[numOrganisms].connexion[numConnexions].synapsetypeid	= (const string*)(*connexion_child).child("SynapseTypeID").text().get();
 			organism[numOrganisms].connexion[numConnexions].delay			= (const string*)(*connexion_child).child("Delay").text().get();
 			organism[numOrganisms].connexion[numConnexions].g				= (const string*)(*connexion_child).child("G").text().get();
-			numNonSpikeSynapses++;
+			
+			numConnexions++;
 		}
-		//cout << "total number of connexions: " << numConnexions << endl;
 
+		//	Test the size of the found loaded connexions
+		if (organism[numOrganisms].connexion.size() != numConnexions){
+			error_handler(WARNING_CONNEXION_SIZE_MISMATCH);
+		}
+
+		//	Print the size of the vector of struct
+		cout << endl << "Connexion list of size " << organism[numOrganisms].connexion.size() << " found." << endl;
+		cout << "Elements found and loaded: " << endl;
+		
+		//	Print the elements 
+		for (int i = 0, size = organism[numOrganisms].connexion.size(); i < size; ++i){
+			cout << "\tID\t\t"				<< &organism[numOrganisms].connexion[i].id				<< endl;
+			cout << "\tSource ID\t"			<< &organism[numOrganisms].connexion[i].sourceid		<< endl;
+			cout << "\tTarget ID\t"			<< &organism[numOrganisms].connexion[i].targetid		<< endl;
+			cout << "\tType\t\t"			<< &organism[numOrganisms].connexion[i].type			<< endl;
+			cout << "\tSynapse Type ID\t"	<< &organism[numOrganisms].connexion[i].synapsetypeid	<< endl;
+			cout << "\tDelay\t\t"			<< &organism[numOrganisms].connexion[i].delay			<< endl;
+			cout << "\tG\t\t"				<< &organism[numOrganisms].connexion[i].g				<< endl;
+			cout << "	" << endl;
+		}
 	}
 
-
+	/**************************************************************************************\
+	|		exit if user has time to read and validate stored data / printed data
+	\**************************************************************************************/
 	do {
-		cout << "Press 'e' to exit: " ;
+		cout << "Press 'e' to exit: ";
 		cin >> exit;
 		if (exit == 'e' || exit == 'E'){
 			exit = 1;
@@ -306,4 +449,59 @@ int main(){
 	} while (exit != 1);
 
 	return 0;
+}
+
+/*************************************************************************************************************************************\
+|
+|		Print vector elements - 
+|			print a loaded vector element by element
+|			expecting the input to be a vector of structs of vector of structs
+|
+\*************************************************************************************************************************************/
+
+void printVect(vector<string>const& vect)
+{
+	//	Check if the loaded vector is empty or has element
+	if (vect.empty()){
+		cout << "The vector loaded is empty." << endl;
+		return;
+	}
+
+	//	Print the found elements
+	for (int i = 0, size = vect.size(); i < size; ++i){
+		cout << "organism name:\t"	<< &vect[i] << endl;
+		cout << "organism id:\t"	<< &vect[i] << endl;
+	}
+}
+
+/*************************************************************************************************************************************\
+|
+|		Error Handler - 
+|
+\*************************************************************************************************************************************/
+
+void error_handler(int err)
+{
+	switch (err){
+		case  ERROR_FILE_LOAD:
+			cout << "File or file path corrupt." << endl;
+			cout << "Unable to locate or load project configuration asim file." << endl;
+			cout << "Please check files, correct issue and try again." << endl;
+		case  WARNING_ORGANISM_SIZE_MISMATCH:
+			cout << "Warning, organism vector size counted vs. loaded do not match." << endl;
+		case  WARNING_NEURONAL_SIZE_MISMATCH:
+			cout << "Warning, neuronal vector size counted vs. loaded do not match." << endl;
+		case  WARNING_CONNEXION_SIZE_MISMATCH:
+			cout << "Warning, connexion vector size counted vs. loaded do not match." << endl;
+		case  WARNING_SYNAPSE_SPIKING_SIZE_MISMATCH:
+			cout << "Warning, spiking synapse vector size counted vs. loaded do not match." << endl;
+		case  WARNING_SYNAPSE_NONSPIKING_SIZE_MISMATCH:
+			cout << "Warning, non-spiking synapse vector size counted vs. loaded do not match." << endl;
+		case  WARNING_SYNAPSE_ELECTRICAL_SIZE_MISMATCH:
+			cout << "Warning, electrical synapse vector size counted vs. loaded do not match." << endl;
+		default:
+			// Should not reach this state, else unknown error occured.
+			cout << "Unknown error occured." << endl;
+	}
+	exit;
 }
