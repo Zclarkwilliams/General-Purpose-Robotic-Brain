@@ -6,16 +6,9 @@ using namespace std;
 #include <iostream>
 //	Non-Standard libraries
 #include "pugixml.hpp"
+#include "error_handler.hpp"
 
-void error_handler(int err);
-
-const int ERROR_FILE_LOAD = -1;
-const int WARNING_ORGANISM_SIZE_MISMATCH = -2;
-const int WARNING_NEURONAL_SIZE_MISMATCH = -3;
-const int WARNING_CONNEXION_SIZE_MISMATCH = -4;
-const int WARNING_SYNAPSE_SPIKING_SIZE_MISMATCH = -5;
-const int WARNING_SYNAPSE_NONSPIKING_SIZE_MISMATCH = -6;
-const int WARNING_SYNAPSE_ELECTRICAL_SIZE_MISMATCH = -7;
+void printVect(vector<string>const& vect)
 
 typedef struct {
 	const string* name;
@@ -112,7 +105,7 @@ typedef struct{
 } Organisms;
 
 
-int main(){
+int main(int argc, char** argv) {
 /*****************************************************************\
 |		Identifiers and declarations -
 \*****************************************************************/
@@ -126,7 +119,7 @@ int main(){
 
 	//	Vector of organism sturct
 	std::vector<Organisms>	organism;
-	
+
 	//	Declare vector of organism structs
 	pugi::xml_node_iterator	organism_child;
 
@@ -135,7 +128,7 @@ int main(){
 
 	//	Declare vector of copnnexion structs
 	pugi::xml_node_iterator connexion_child;
-	
+
 	//	Synapse Nodes (3 types: Spiking, Non-Spiking, Electrical)
 	pugi::xml_node_iterator synapse_elec_child;
 	pugi::xml_node_iterator synapse_spiking_child;
@@ -149,12 +142,12 @@ int main(){
 /*****************************************************************\
 |		File load and validate section -
 \*****************************************************************/
-	
+
 	const char* filepath = "test_file.asim";
-	
+
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filepath);
-	
+
 	if (!result){
 		error_handler(ERROR_FILE_LOAD);
 	}
@@ -166,7 +159,7 @@ int main(){
 	\*****************************************************************/
 	//	Set parent node to start traversing file from
 	pugi::xml_node organism_parent = doc.child("Simulation").child("Environment").child("Organisms");
-	
+
 	//	Create array object for the iteration and struct array
 	pugi::xml_object_range<pugi::xml_node_iterator> organismlist = organism_parent.children();
 
@@ -195,17 +188,17 @@ int main(){
 		/**********************************************************************************************************************************************************\
 		|
 		|		Neuron Section -
-		|	
+		|
 		\**********************************************************************************************************************************************************/
 		//	Set a list to be generated on the neuron identified by the "Neurons.Neuron" name in the xml config file
 		pugi::xml_object_range<pugi::xml_node_iterator> neuronlist = neuralModule.child("Neurons").children();
-		
+
 		//	Generate neuron counter for length of vector of structs
 		unsigned int numNeurons = 0;
-		
+
 		//	Generate for loop to store neurons in each organism
 		for (neuron_child = neuronlist.begin(); neuron_child != neuronlist.end(); neuron_child++){
-			
+
 			//	Make room for the new member struct by pushing the vector
 			organism[numOrganisms].neuron.push_back(neurs);
 
@@ -308,12 +301,12 @@ int main(){
 			numSpikingSynapses++;
 		}
 		cout << "total number of spiking synapses: " << numSpikingSynapses << endl;
-		
+
 		/**********************************************************************************************************************************************************\
 		|***************************************************************	Non-Spiking Synapses	***************************************************************|
 		\**********************************************************************************************************************************************************/
 		pugi::xml_object_range<pugi::xml_node_iterator> synapse_nonspiking_list = Synapses.child("NonSpikingSynapses").children();
-		
+
 		//	Generate nonspiking synapse counter for length of vector of structs
 		unsigned int numNonSpikeSynapses = 0;
 
@@ -346,13 +339,13 @@ int main(){
 		|***************************************************************	Electrical Synapses		***************************************************************|
 		\**********************************************************************************************************************************************************/
 		pugi::xml_object_range<pugi::xml_node_iterator> synapse_elec_list = Synapses.child("ElectricalSynapses").children();
-		
+
 		//	Generate electrical synapse counter for length of vector of structs
 		unsigned int numElectricalSynapses = 0;
-		
+
 		//	Generate for loop to store neuronal electrical synapse in each organism
 		for (synapse_elec_child = synapse_elec_list.begin(); synapse_elec_child != synapse_elec_list.end(); synapse_elec_child++){
-			
+
 			//	Make room for the new member struct by pushing the vector
 			organism[numOrganisms].synapse_electrical.push_back(synelec);
 
@@ -380,18 +373,18 @@ int main(){
 
 		/*************************************************************************************************************************************\
 		|
-		|		Connexion Section - 
+		|		Connexion Section -
 		|
 		\*************************************************************************************************************************************/
 		//	Connexion node to identify each individual instance
 		pugi::xml_object_range<pugi::xml_node_iterator> connexion_list = neuralModule.child("Connexions").children();
-		
+
 		//	Generate connexion counter for length of vector of structs
 		unsigned int numConnexions = 0;
-		
+
 		//	Generate for loop to store neuronal connexions in each organism
 		for (connexion_child = connexion_list.begin(); connexion_child != connexion_list.end(); connexion_child++){
-			
+
 			//	Make room for the new member struct by pushing the vector
 			organism[numOrganisms].connexion.push_back(conxs);
 
@@ -411,7 +404,7 @@ int main(){
 			organism[numOrganisms].connexion[numConnexions].synapsetypeid	= (const string*)(*connexion_child).child("SynapseTypeID").text().get();
 			organism[numOrganisms].connexion[numConnexions].delay			= (const string*)(*connexion_child).child("Delay").text().get();
 			organism[numOrganisms].connexion[numConnexions].g				= (const string*)(*connexion_child).child("G").text().get();
-			
+
 			numConnexions++;
 		}
 
@@ -423,8 +416,8 @@ int main(){
 		//	Print the size of the vector of struct
 		cout << endl << "Connexion list of size " << organism[numOrganisms].connexion.size() << " found." << endl;
 		cout << "Elements found and loaded: " << endl;
-		
-		//	Print the elements 
+
+		//	Print the elements
 		for (int i = 0, size = organism[numOrganisms].connexion.size(); i < size; ++i){
 			cout << "\tID\t\t"				<< &organism[numOrganisms].connexion[i].id				<< endl;
 			cout << "\tSource ID\t"			<< &organism[numOrganisms].connexion[i].sourceid		<< endl;
@@ -453,14 +446,13 @@ int main(){
 
 /*************************************************************************************************************************************\
 |
-|		Print vector elements - 
+|		Print vector elements -
 |			print a loaded vector element by element
 |			expecting the input to be a vector of structs of vector of structs
 |
 \*************************************************************************************************************************************/
 
-void printVect(vector<string>const& vect)
-{
+void printVect(vector<string>const& vect) {
 	//	Check if the loaded vector is empty or has element
 	if (vect.empty()){
 		cout << "The vector loaded is empty." << endl;
@@ -472,36 +464,4 @@ void printVect(vector<string>const& vect)
 		cout << "organism name:\t"	<< &vect[i] << endl;
 		cout << "organism id:\t"	<< &vect[i] << endl;
 	}
-}
-
-/*************************************************************************************************************************************\
-|
-|		Error Handler - 
-|
-\*************************************************************************************************************************************/
-
-void error_handler(int err)
-{
-	switch (err){
-		case  ERROR_FILE_LOAD:
-			cout << "File or file path corrupt." << endl;
-			cout << "Unable to locate or load project configuration asim file." << endl;
-			cout << "Please check files, correct issue and try again." << endl;
-		case  WARNING_ORGANISM_SIZE_MISMATCH:
-			cout << "Warning, organism vector size counted vs. loaded do not match." << endl;
-		case  WARNING_NEURONAL_SIZE_MISMATCH:
-			cout << "Warning, neuronal vector size counted vs. loaded do not match." << endl;
-		case  WARNING_CONNEXION_SIZE_MISMATCH:
-			cout << "Warning, connexion vector size counted vs. loaded do not match." << endl;
-		case  WARNING_SYNAPSE_SPIKING_SIZE_MISMATCH:
-			cout << "Warning, spiking synapse vector size counted vs. loaded do not match." << endl;
-		case  WARNING_SYNAPSE_NONSPIKING_SIZE_MISMATCH:
-			cout << "Warning, non-spiking synapse vector size counted vs. loaded do not match." << endl;
-		case  WARNING_SYNAPSE_ELECTRICAL_SIZE_MISMATCH:
-			cout << "Warning, electrical synapse vector size counted vs. loaded do not match." << endl;
-		default:
-			// Should not reach this state, else unknown error occured.
-			cout << "Unknown error occured." << endl;
-	}
-	exit;
 }
