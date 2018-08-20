@@ -14,10 +14,24 @@ using namespace std;
 //  Non-Standard headers and libraries
 #include "system_defines.h"
 
-class error_handler {
+enum class ErrorLevel{
+//	System Error Levels
+	ERROR_FILE_LOAD
+}
+enum class WarningLevel{
+//	System Warning Levels
+	WARNING_ORGANISM_SIZE_MISMATCH,
+	WARNING_NEURONAL_SIZE_MISMATCH,
+	WARNING_CONNEXION_SIZE_MISMATCH,
+	WARNING_SYNAPSE_SPIKING_SIZE_MISMATCH,
+	WARNING_SYNAPSE_NONSPIKING_SIZE_MISMATCH,
+	WARNING_SYNAPSE_ELECTRICAL_SIZE_MISMATCH
+}
+
+class ErrorHandler {
     private:
-      unsigned char origin_byte:8;
-      unsigned char error_byte:8;
+    	unsigned char origin_byte;
+    	unsigned char error_byte;
 
     public:
         //	Error Handler Functions
@@ -28,6 +42,8 @@ class error_handler {
 };
 
 int error_handler(uint16_t err) {
+uint8_t n = 8;
+uint16_t err_bit_format = 16;
 
 err_bit_format * n = &err;
 uint8_t err_origin = n->origin_byte;
