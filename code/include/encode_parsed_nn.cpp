@@ -5,19 +5,16 @@
 #include <iostream>
 //	Non-Standard libraries
 //#inculde "error_handler.h
+
+//	Custom made header files
 #include "model_config_data.hpp"
 #include "system_defines.hpp"
 
 int main(int argc, char** argv ){
-	std::string get_config_file;
-	NeuralModel* neuralmodel;
+	/*	Creating the vector for the class and allocate the room for the vector.	*/
+	std::shared_ptr<NeuralModel> neural_model_main = std::make_shared<NeuralModel>();
 
-	std::cout << "Enter model file path (.asim type): ";
-	std::cin >> get_config_file; 
-
-    neuralmodel->configFilePath = get_config_file;
-
-    neuralmodel->parse_model_config();
+	neural_model_main->parse_config_file();
 
 	/*
     Organisms organism;
@@ -32,6 +29,8 @@ int main(int argc, char** argv ){
 		cout << "	" << endl;
 	};
 	*/
-	std::cin.get();
+	std::system("PAUSE");
+	//std::cin.get();
+
 	return 0;
 }

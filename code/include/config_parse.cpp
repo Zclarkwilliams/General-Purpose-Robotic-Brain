@@ -3,34 +3,23 @@
 //	Standard libraries
 #include <vector>
 #include <sstream>
+#include <fstream>
 #include <iostream>
+
 //	Non-Standard libraries
 #include "pugixml.hpp"
-//#include "error_handler.hpp"
 
+//	Custom made header files
+//#include "error_handler.hpp"
 #include "model_config_data.hpp"
 
-void printVect(std::vector<std::string>const& vect);
-
-int NeuralModel::parse_model_config(char* file_path) {
-//int main(int argc, const char* argv[]){
-/*****************************************************************\
-|		Identifiers and declarations -
-\*****************************************************************/
+int NeuralModel::parse_config_file() {
+	/*****************************************************************\
+	|		Identifiers and declarations -
+	\*****************************************************************/
 	//	Identifiers to the specific struct vectors
-	/*
-	NeuralModel.Organisms				orgis;
-	NeuralModel.Neurons					neurs;
-	NeuralModel.Connexions				conxs;
-	NeuralModel.SynapsesSpiking			synspk;
-	NeuralModel.SynapsesElectrical		synelec;
-	NeuralModel.SynapsesNonSpiking		synnonspk;
-	*/
-	NeuralModel* neuralmodel;
-	//neuralmodel.organismVector orgVect;
-	//	Vector of organism sturct
-	//std::vector<neuralmodel.organism>	organism;
-
+	/*	Creating the vector for the class and allocate the room for the vector.	*/
+	std::shared_ptr<NeuralModel> neural_model = std::make_shared<NeuralModel>();
 
 	//	Declare vector of organism structs
 	pugi::xml_node_iterator	organism_child;
@@ -46,27 +35,36 @@ int NeuralModel::parse_model_config(char* file_path) {
 	pugi::xml_node_iterator synapse_spiking_child;
 	pugi::xml_node_iterator synapse_nonspiking_child;
 
-/*****************************************************************\
-|		Variables -
-\*****************************************************************/
+	/*****************************************************************\
+	|		Variables -
+	\*****************************************************************/
 	char exit = 0;
 
-/*****************************************************************\
-|		File load and validate section -
-\*****************************************************************/
+	/*****************************************************************\
+	|		File load and validate section -
+	\*****************************************************************/
+	//std::string strfile = NeuralModel::get_config_file_path();
+	NeuralModel::get_config_file_path();
 
-	const char* filepath = "C:\\Users\\Zachary\\Documents\\A_School\\URMP\\code\\include\\InvertedPendulum_mscfbk_09__17_Standalone.asim"; //= file_path;
+	//configFilePath = &strfile[0];
+
+	std::cout << "File Path:  " << (*configFilePath) << " Length: " << strlen(configFilePath) << std::endl;
+	
+	//const char *filepath = "C:\Users\Zachary\Documents\A_School\URMP\AgileRobotics_Supplied_Ref_Material\InvertedPendulum_mscfbk_09__17\InvertedPendulum_mscfbk_09__17_Standalone.asim";
+	//const char *filepath = "C:\Users\Zachary\Documents\A_School\URMP\code\include\InvertedPendulum_mscfbk_09__17_Standalone.xml";
+	const char *filepath = "InvertedPendulum_mscfbk_09__17_Standalone.asim";
 
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(filepath);
 
 	if (!result){
 		//error_handler(ERROR_FILE_LOAD);
-		std::cout << "File " << filepath << " empty. Please fix path and try again." << std::endl << std::endl;
+		std::cout << result.description() << std::endl;
+		std::cout << "File " << configFilePath << " empty. Please fix path and try again." << std::endl;
 		return 1;
 	}
 
-	std::cout << "File " << filepath << " Loaded Sucessfully " << std::endl << std::endl;
+	std::cout << "***********File loaded sucessfully " << std::endl << std::endl;
 
 	/*****************************************************************\
 	|		Organism declaration and path setup -
@@ -88,11 +86,9 @@ int NeuralModel::parse_model_config(char* file_path) {
 		|	Organism Section -
 		|
 		\**********************************************************************************************************************************************************/
-		
-		//std::make_unique<neuralmodel.organismStruct>() orgstructtemp;
 
-		neuralmodel->organismStruct->organism_name	= (const std::string*)organism_parent.child("Organsim").child("Name").text().get();
-		neuralmodel->organismStruct->organism_id	= (const std::string*)organism_parent.child("Organsim").child("ID").text().get();
+		organismStruct->organism_name	= (const std::string*)organism_parent.child("Organsim").child("Name").text().get();
+		organismStruct->organism_id		= (const std::string*)organism_parent.child("Organsim").child("ID").text().get();
 		/*
 		neuralmodel.organismStruct->organism_name	= (const std::string*)organism_parent.child("Organsim").child("Name").text().get();
 		neuralmodel.organismStruct->organism_id	= (const std::string*)organism_parent.child("Organsim").child("ID").text().get();
@@ -102,12 +98,14 @@ int NeuralModel::parse_model_config(char* file_path) {
 		std::cout << "\t" << &organism[numOrganisms].organism_name << std::endl;
 		*/
 
-		std::cout << "\tfound organism name:\t" << (const std::string*)organism_parent.child("Organsim").child("Name").text().get() << std::endl;
-		std::cout << "\tstored organism name:\t" << neuralmodel->organismStruct->organism_name << std::endl;
+		if ((const std::string*)organism_parent.child("Organsim").child("Name").text().get() != organismStruct->organism_name) {
+			std::cout << "Error: found and stored names are not identical. Please fix and try again." << std::endl;
+			std::cout << "\tFound organism name:\t" << (const std::string*)organism_parent.child("Organsim").child("Name").text().get() << std::endl;
+			std::cout << "\tStored organism name:\t" << organismStruct->organism_name << std::endl;
+		}
 
 		//	Push back new organism created with default constructor
-		//neuralmodel->organismVector.push_back(orgstructtemp);
-		neuralmodel->organismVector.push_back(std::make_shared<neuralmodel->organismStruct>());
+		organismVector.emplace_back(organismStruct);
 
 		pugi::xml_node neuralModule = (*organism_child).child("NervousSystem").child("NeuralModules").child("NeuralModule");
 
@@ -129,31 +127,31 @@ int NeuralModel::parse_model_config(char* file_path) {
 			organism[numOrganisms].neuron.push_back(neurs);
 
 			//	Load data to struct vector
-			organism[numOrganisms].neuron[numNeurons].name						= (const std::string*)(*neuron_child).child("Name").text().get();
-			organism[numOrganisms].neuron[numNeurons].id						= (const std::string*)(*neuron_child).child("ID").text().get();
-			organism[numOrganisms].neuron[numNeurons].enabled					= (const std::string*)(*neuron_child).child("Enabled").text().get();
-			organism[numOrganisms].neuron[numNeurons].tonicstimulus				= (const std::string*)(*neuron_child).child("TonicStimulus").text().get();
-			organism[numOrganisms].neuron[numNeurons].noise						= (const std::string*)(*neuron_child).child("Noise").text().get();
-			organism[numOrganisms].neuron[numNeurons].restingpot				= (const std::string*)(*neuron_child).child("RestingPot").text().get();
-			organism[numOrganisms].neuron[numNeurons].size						= (const std::string*)(*neuron_child).child("Size").text().get();
-			organism[numOrganisms].neuron[numNeurons].timeconst					= (const std::string*)(*neuron_child).child("TimeConst").text().get();
-			organism[numOrganisms].neuron[numNeurons].initthresh				= (const std::string*)(*neuron_child).child("InitialThresh").text().get();
-			organism[numOrganisms].neuron[numNeurons].relativeaccom				= (const std::string*)(*neuron_child).child("RelativeAccom").text().get();
-			organism[numOrganisms].neuron[numNeurons].accomtimeconst			= (const std::string*)(*neuron_child).child("AccomTimeConst").text().get();
-			organism[numOrganisms].neuron[numNeurons].ahpamp					= (const std::string*)(*neuron_child).child("AHPAmp").text().get();
-			organism[numOrganisms].neuron[numNeurons].ahptimeconst				= (const std::string*)(*neuron_child).child("AHPTimeConst").text().get();
-			organism[numOrganisms].neuron[numNeurons].gmaxca					= (const std::string*)(*neuron_child).child("GMaxCa").text().get();
-			organism[numOrganisms].neuron[numNeurons].burstinitatbottom			= (const std::string*)(*neuron_child).child("BurstInitAtBottom").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_id				= (const std::string*)(*neuron_child).child("CaActivation").child("ID").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_midpoint			= (const std::string*)(*neuron_child).child("CaActivation").child("MidPoint").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_slope			= (const std::string*)(*neuron_child).child("CaActivation").child("Slope").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_timeconst		= (const std::string*)(*neuron_child).child("CaActivation").child("TimeConstant").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_activatetype		= (const std::string*)(*neuron_child).child("CaActivation").child("ActivationType").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_id				= (const std::string*)(*neuron_child).child("CaDeactivation").child("ID").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_midpoint		= (const std::string*)(*neuron_child).child("CaDeactivation").child("MidPoint").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_slope			= (const std::string*)(*neuron_child).child("CaDeactivation").child("Slope").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_timeconst		= (const std::string*)(*neuron_child).child("CaDeactivation").child("TimeConstant").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_activatetype	= (const std::string*)(*neuron_child).child("CaDeactivation").child("ActivationType").text().get();
+			organism[numOrganisms].neuron[numNeurons].name						= (const std::string*)neuron_child->child("Name").text().get();
+			organism[numOrganisms].neuron[numNeurons].id						= (const std::string*)neuron_child->child("ID").text().get();
+			organism[numOrganisms].neuron[numNeurons].enabled					= (const std::string*)neuron_child->child("Enabled").text().get();
+			organism[numOrganisms].neuron[numNeurons].tonicstimulus				= (const std::string*)neuron_child->child("TonicStimulus").text().get();
+			organism[numOrganisms].neuron[numNeurons].noise						= (const std::string*)neuron_child->child("Noise").text().get();
+			organism[numOrganisms].neuron[numNeurons].restingpot				= (const std::string*)neuron_child->child("RestingPot").text().get();
+			organism[numOrganisms].neuron[numNeurons].size						= (const std::string*)neuron_child->child("Size").text().get();
+			organism[numOrganisms].neuron[numNeurons].timeconst					= (const std::string*)neuron_child->child("TimeConst").text().get();
+			organism[numOrganisms].neuron[numNeurons].initthresh				= (const std::string*)neuron_child->child("InitialThresh").text().get();
+			organism[numOrganisms].neuron[numNeurons].relativeaccom				= (const std::string*)neuron_child->child("RelativeAccom").text().get();
+			organism[numOrganisms].neuron[numNeurons].accomtimeconst			= (const std::string*)neuron_child->child("AccomTimeConst").text().get();
+			organism[numOrganisms].neuron[numNeurons].ahpamp					= (const std::string*)neuron_child->child("AHPAmp").text().get();
+			organism[numOrganisms].neuron[numNeurons].ahptimeconst				= (const std::string*)neuron_child->child("AHPTimeConst").text().get();
+			organism[numOrganisms].neuron[numNeurons].gmaxca					= (const std::string*)neuron_child->child("GMaxCa").text().get();
+			organism[numOrganisms].neuron[numNeurons].burstinitatbottom			= (const std::string*)neuron_child->child("BurstInitAtBottom").text().get();
+			organism[numOrganisms].neuron[numNeurons].caactive_id				= (const std::string*)neuron_child->child("CaActivation").child("ID").text().get();
+			organism[numOrganisms].neuron[numNeurons].caactive_midpoint			= (const std::string*)neuron_child->child("CaActivation").child("MidPoint").text().get();
+			organism[numOrganisms].neuron[numNeurons].caactive_slope			= (const std::string*)neuron_child->child("CaActivation").child("Slope").text().get();
+			organism[numOrganisms].neuron[numNeurons].caactive_timeconst		= (const std::string*)neuron_child->child("CaActivation").child("TimeConstant").text().get();
+			organism[numOrganisms].neuron[numNeurons].caactive_activatetype		= (const std::string*)neuron_child->child("CaActivation").child("ActivationType").text().get();
+			organism[numOrganisms].neuron[numNeurons].cadeactive_id				= (const std::string*)neuron_child->child("CaDeactivation").child("ID").text().get();
+			organism[numOrganisms].neuron[numNeurons].cadeactive_midpoint		= (const std::string*)neuron_child->child("CaDeactivation").child("MidPoint").text().get();
+			organism[numOrganisms].neuron[numNeurons].cadeactive_slope			= (const std::string*)neuron_child->child("CaDeactivation").child("Slope").text().get();
+			organism[numOrganisms].neuron[numNeurons].cadeactive_timeconst		= (const std::string*)neuron_child->child("CaDeactivation").child("TimeConstant").text().get();
+			organism[numOrganisms].neuron[numNeurons].cadeactive_activatetype	= (const std::string*)neuron_child->child("CaDeactivation").child("ActivationType").text().get();
 			numNeurons++;
 		}
 		std::cout << "total number of neurons: " << numNeurons << std::endl;
@@ -183,46 +181,46 @@ int NeuralModel::parse_model_config(char* file_path) {
 			organism[numOrganisms].synapse_spiking.push_back(synspk);
 
 			/*
-			std::cout << "Name: "			<< (*synapse_spiking_child).child("Name").child_value()				<< std::endl;
-			std::cout << "\tID: "			<< (*synapse_spiking_child).child("ID").child_value()				<< std::endl;
-			std::cout << "\tType: "			<< (*synapse_spiking_child).child("Type").child_value()				<< std::endl;
-			std::cout << "\tEquil: "			<< (*synapse_spiking_child).child("Equil").child_value()			<< std::endl;
-			std::cout << "\tSyn Amp: "		<< (*synapse_spiking_child).child("SynAmp").child_value()			<< std::endl;
-			std::cout << "\tDecay: "			<< (*synapse_spiking_child).child("Decay").child_value()			<< std::endl;
-			std::cout << "\tRel Facil: "		<< (*synapse_spiking_child).child("RelFacil").child_value()			<< std::endl;
-			std::cout << "\tFacil Decay: "	<< (*synapse_spiking_child).child("FacilDecay").child_value()		<< std::endl;
-			std::cout << "\tVolt Dep: "		<< (*synapse_spiking_child).child("VoltDep").child_value()			<< std::endl;
-			std::cout << "\tMax Rel Cond: "	<< (*synapse_spiking_child).child("MaxRelCond").child_value()		<< std::endl;
-			std::cout << "\tSat PS Pot: "	<< (*synapse_spiking_child).child("SatPSPot").child_value()			<< std::endl;
-			std::cout << "\tThresh PS Pot: "	<< (*synapse_spiking_child).child("ThreshPSPot").child_value()		<< std::endl;
-			std::cout << "\tHebbian: "		<< (*synapse_spiking_child).child("Hebbian").child_value()			<< std::endl;
-			std::cout << "\tMax Aug Cond: "	<< (*synapse_spiking_child).child("MaxAugCond").child_value()		<< std::endl;
-			std::cout << "\tLearning Inc: "	<< (*synapse_spiking_child).child("LearningInc").child_value()		<< std::endl;
-			std::cout << "\tLearning Time: "	<< (*synapse_spiking_child).child("LearningTime").child_value()		<< std::endl;
-			std::cout << "\tAllow Forget: "	<< (*synapse_spiking_child).child("AllowForget").child_value()		<< std::endl;
-			std::cout << "\tForget Time: "	<< (*synapse_spiking_child).child("ForgetTime").child_value()		<< std::endl;
-			std::cout << "\tConsolidation: "	<< (*synapse_spiking_child).child("Consolidation").child_value()	<< std::endl;
+			std::cout << "Name: "			<< synapse_spiking_child->child("Name").child_value()				<< std::endl;
+			std::cout << "\tID: "			<< synapse_spiking_child->child("ID").child_value()				<< std::endl;
+			std::cout << "\tType: "			<< synapse_spiking_child->child("Type").child_value()				<< std::endl;
+			std::cout << "\tEquil: "			<< synapse_spiking_child->child("Equil").child_value()			<< std::endl;
+			std::cout << "\tSyn Amp: "		<< synapse_spiking_child->child("SynAmp").child_value()			<< std::endl;
+			std::cout << "\tDecay: "			<< synapse_spiking_child->child("Decay").child_value()			<< std::endl;
+			std::cout << "\tRel Facil: "		<< synapse_spiking_child->child("RelFacil").child_value()			<< std::endl;
+			std::cout << "\tFacil Decay: "	<< synapse_spiking_child->child("FacilDecay").child_value()		<< std::endl;
+			std::cout << "\tVolt Dep: "		<< synapse_spiking_child->child("VoltDep").child_value()			<< std::endl;
+			std::cout << "\tMax Rel Cond: "	<< synapse_spiking_child->child("MaxRelCond").child_value()		<< std::endl;
+			std::cout << "\tSat PS Pot: "	<< synapse_spiking_child->child("SatPSPot").child_value()			<< std::endl;
+			std::cout << "\tThresh PS Pot: "	<< synapse_spiking_child->child("ThreshPSPot").child_value()		<< std::endl;
+			std::cout << "\tHebbian: "		<< synapse_spiking_child->child("Hebbian").child_value()			<< std::endl;
+			std::cout << "\tMax Aug Cond: "	<< synapse_spiking_child->child("MaxAugCond").child_value()		<< std::endl;
+			std::cout << "\tLearning Inc: "	<< synapse_spiking_child->child("LearningInc").child_value()		<< std::endl;
+			std::cout << "\tLearning Time: "	<< synapse_spiking_child->child("LearningTime").child_value()		<< std::endl;
+			std::cout << "\tAllow Forget: "	<< synapse_spiking_child->child("AllowForget").child_value()		<< std::endl;
+			std::cout << "\tForget Time: "	<< synapse_spiking_child->child("ForgetTime").child_value()		<< std::endl;
+			std::cout << "\tConsolidation: "	<< synapse_spiking_child->child("Consolidation").child_value()	<< std::endl;
 			*/
 /*
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].name				= (const std::string*)(*synapse_spiking_child).child("Name").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].id				= (const std::string*)(*synapse_spiking_child).child("ID").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].type				= (const std::string*)(*synapse_spiking_child).child("Type").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].equil			= (const std::string*)(*synapse_spiking_child).child("Equil").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].synamp			= (const std::string*)(*synapse_spiking_child).child("SynAmp").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].decay			= (const std::string*)(*synapse_spiking_child).child("Decay").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].relfacil			= (const std::string*)(*synapse_spiking_child).child("RelFacil").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].facildecay		= (const std::string*)(*synapse_spiking_child).child("FacilDecay").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].voltdep			= (const std::string*)(*synapse_spiking_child).child("VoltDep").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxrelcond		= (const std::string*)(*synapse_spiking_child).child("MaxRelCond").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].satpspot			= (const std::string*)(*synapse_spiking_child).child("SatPSPot").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].threshpspot		= (const std::string*)(*synapse_spiking_child).child("ThreshPSPot").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].hebbian			= (const std::string*)(*synapse_spiking_child).child("Hebbian").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxaugcond		= (const std::string*)(*synapse_spiking_child).child("MaxAugCond").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learninginc		= (const std::string*)(*synapse_spiking_child).child("LearningInc").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learningtime		= (const std::string*)(*synapse_spiking_child).child("LearningTime").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].allowforget		= (const std::string*)(*synapse_spiking_child).child("AllowForget").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].forgettime		= (const std::string*)(*synapse_spiking_child).child("ForgetTime").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].consolidation	= (const std::string*)(*synapse_spiking_child).child("Consolidation").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].name				= (const std::string*)synapse_spiking_child->child("Name").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].id				= (const std::string*)synapse_spiking_child->child("ID").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].type				= (const std::string*)synapse_spiking_child->child("Type").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].equil			= (const std::string*)synapse_spiking_child->child("Equil").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].synamp			= (const std::string*)synapse_spiking_child->child("SynAmp").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].decay			= (const std::string*)synapse_spiking_child->child("Decay").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].relfacil			= (const std::string*)synapse_spiking_child->child("RelFacil").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].facildecay		= (const std::string*)synapse_spiking_child->child("FacilDecay").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].voltdep			= (const std::string*)synapse_spiking_child->child("VoltDep").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxrelcond		= (const std::string*)synapse_spiking_child->child("MaxRelCond").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].satpspot			= (const std::string*)synapse_spiking_child->child("SatPSPot").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].threshpspot		= (const std::string*)synapse_spiking_child->child("ThreshPSPot").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].hebbian			= (const std::string*)synapse_spiking_child->child("Hebbian").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxaugcond		= (const std::string*)synapse_spiking_child->child("MaxAugCond").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learninginc		= (const std::string*)synapse_spiking_child->child("LearningInc").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learningtime		= (const std::string*)synapse_spiking_child->child("LearningTime").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].allowforget		= (const std::string*)synapse_spiking_child->child("AllowForget").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].forgettime		= (const std::string*)synapse_spiking_child->child("ForgetTime").text().get();
+			organism[numOrganisms].synapse_spiking[numSpikingSynapses].consolidation	= (const std::string*)synapse_spiking_child->child("Consolidation").text().get();
 
 			numSpikingSynapses++;
 		}
@@ -243,20 +241,20 @@ int NeuralModel::parse_model_config(char* file_path) {
 			organism[numOrganisms].synapse_nonspiking.push_back(synnonspk);
 */
 			/*
-			std::cout << "Name: "		<< (*synapse_nonspiking_child).child("Name").child_value()		<< std::endl;
-			std::cout << "\tID: "		<< (*synapse_nonspiking_child).child("ID").child_value()		<< std::endl;
-			std::cout << "\tType: "		<< (*synapse_nonspiking_child).child("Type").child_value()		<< std::endl;
-			std::cout << "\tEquil: "		<< (*synapse_nonspiking_child).child("Equil").child_value()		<< std::endl;
-			std::cout << "\tSynAmp: "	<< (*synapse_nonspiking_child).child("SynAmp").child_value()	<< std::endl;
-			std::cout << "\tSat. V: "	<< (*synapse_nonspiking_child).child("SaturateV").child_value()	<< std::endl;
+			std::cout << "Name: "		<< synapse_nonspiking_child->child("Name").child_value()		<< std::endl;
+			std::cout << "\tID: "		<< synapse_nonspiking_child->child("ID").child_value()		<< std::endl;
+			std::cout << "\tType: "		<< synapse_nonspiking_child->child("Type").child_value()		<< std::endl;
+			std::cout << "\tEquil: "		<< synapse_nonspiking_child->child("Equil").child_value()		<< std::endl;
+			std::cout << "\tSynAmp: "	<< synapse_nonspiking_child->child("SynAmp").child_value()	<< std::endl;
+			std::cout << "\tSat. V: "	<< synapse_nonspiking_child->child("SaturateV").child_value()	<< std::endl;
 			*/
 /*
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].name			= (const std::string*)(*synapse_nonspiking_child).child("Name").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].id			= (const std::string*)(*synapse_nonspiking_child).child("ID").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].type			= (const std::string*)(*synapse_nonspiking_child).child("Type").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].equil		= (const std::string*)(*synapse_nonspiking_child).child("Equil").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].synamp		= (const std::string*)(*synapse_nonspiking_child).child("SynAmp").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].saturatev	= (const std::string*)(*synapse_nonspiking_child).child("SaturateV").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].name			= (const std::string*)synapse_nonspiking_child->child("Name").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].id			= (const std::string*)synapse_nonspiking_child->child("ID").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].type			= (const std::string*)synapse_nonspiking_child->child("Type").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].equil		= (const std::string*)synapse_nonspiking_child->child("Equil").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].synamp		= (const std::string*)synapse_nonspiking_child->child("SynAmp").text().get();
+			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].saturatev	= (const std::string*)synapse_nonspiking_child->child("SaturateV").text().get();
 			numNonSpikeSynapses++;
 		}
 		std::cout << "total number of nonspiking synapses: " << numNonSpikeSynapses << std::endl;
@@ -276,22 +274,22 @@ int NeuralModel::parse_model_config(char* file_path) {
 			organism[numOrganisms].synapse_electrical.push_back(synelec);
 */
 			/*
-			std::cout << "Name: "		<< (*synapse_elec_child).child("Name").child_value()		<< std::endl;
-			std::cout << "\tID: "		<< (*synapse_elec_child).child("ID").child_value()			<< std::endl;
-			std::cout << "\tType: "		<< (*synapse_elec_child).child("Type").child_value()		<< std::endl;
-			std::cout << "\tLow Coup: "	<< (*synapse_elec_child).child("LowCoup").child_value()		<< std::endl;
-			std::cout << "\tHi Coup: "	<< (*synapse_elec_child).child("HiCoup").child_value()		<< std::endl;
-			std::cout << "\tTurn On V: "	<< (*synapse_elec_child).child("TurnOnV").child_value()		<< std::endl;
-			std::cout << "\tSat. V: "	<< (*synapse_elec_child).child("SaturateV").child_value()	<< std::endl;
+			std::cout << "Name: "		<< synapse_elec_child->child("Name").child_value()		<< std::endl;
+			std::cout << "\tID: "		<< synapse_elec_child->child("ID").child_value()			<< std::endl;
+			std::cout << "\tType: "		<< synapse_elec_child->child("Type").child_value()		<< std::endl;
+			std::cout << "\tLow Coup: "	<< synapse_elec_child->child("LowCoup").child_value()		<< std::endl;
+			std::cout << "\tHi Coup: "	<< synapse_elec_child->child("HiCoup").child_value()		<< std::endl;
+			std::cout << "\tTurn On V: "	<< synapse_elec_child->child("TurnOnV").child_value()		<< std::endl;
+			std::cout << "\tSat. V: "	<< synapse_elec_child->child("SaturateV").child_value()	<< std::endl;
 			*/
 /*
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].name		= (const std::string*)(*synapse_elec_child).child("Name").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].id			= (const std::string*)(*synapse_elec_child).child("ID").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].type		= (const std::string*)(*synapse_elec_child).child("Type").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].lowcoup	= (const std::string*)(*synapse_elec_child).child("LowCoup").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].hicoup		= (const std::string*)(*synapse_elec_child).child("HiCoup").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].turnonv	= (const std::string*)(*synapse_elec_child).child("TurnOnV").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].saturatev	= (const std::string*)(*synapse_elec_child).child("SaturateV").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].name		= (const std::string*)synapse_elec_child->child("Name").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].id			= (const std::string*)synapse_elec_child->child("ID").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].type		= (const std::string*)synapse_elec_child->child("Type").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].lowcoup	= (const std::string*)synapse_elec_child->child("LowCoup").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].hicoup		= (const std::string*)synapse_elec_child->child("HiCoup").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].turnonv	= (const std::string*)synapse_elec_child->child("TurnOnV").text().get();
+			organism[numOrganisms].synapse_electrical[numElectricalSynapses].saturatev	= (const std::string*)synapse_elec_child->child("SaturateV").text().get();
 
 			numElectricalSynapses++;
 		}
@@ -315,21 +313,21 @@ int NeuralModel::parse_model_config(char* file_path) {
 			organism[numOrganisms].connexion.push_back(conxs);
 
 			/*
-			std::cout << "Name: "		<< (*connexion_child).child("Name").child_value()		<< std::endl;
-			std::cout << "\tID: "		<< (*connexion_child).child("ID").child_value()			<< std::endl;
-			std::cout << "\tType: "		<< (*connexion_child).child("Type").child_value()		<< std::endl;
-			std::cout << "\tEquil: "		<< (*connexion_child).child("Equil").child_value()		<< std::endl;
-			std::cout << "\tSynAmp: "	<< (*connexion_child).child("SynAmp").child_value()		<< std::endl;
-			std::cout << "\tSat. V: "	<< (*connexion_child).child("SaturateV").child_value()	<< std::endl;
+			std::cout << "Name: "		<< connexion_child->child("Name").child_value()		<< std::endl;
+			std::cout << "\tID: "		<< connexion_child->child("ID").child_value()			<< std::endl;
+			std::cout << "\tType: "		<< connexion_child->child("Type").child_value()		<< std::endl;
+			std::cout << "\tEquil: "		<< connexion_child->child("Equil").child_value()		<< std::endl;
+			std::cout << "\tSynAmp: "	<< connexion_child->child("SynAmp").child_value()		<< std::endl;
+			std::cout << "\tSat. V: "	<< connexion_child->child("SaturateV").child_value()	<< std::endl;
 			*/
 /*
-			organism[numOrganisms].connexion[numConnexions].id				= (const std::string*)(*connexion_child).child("ID").text().get();
-			organism[numOrganisms].connexion[numConnexions].sourceid		= (const std::string*)(*connexion_child).child("SourceID").text().get();
-			organism[numOrganisms].connexion[numConnexions].targetid		= (const std::string*)(*connexion_child).child("TargetID").text().get();
-			organism[numOrganisms].connexion[numConnexions].type			= (const std::string*)(*connexion_child).child("Type").text().get();
-			organism[numOrganisms].connexion[numConnexions].synapsetypeid	= (const std::string*)(*connexion_child).child("SynapseTypeID").text().get();
-			organism[numOrganisms].connexion[numConnexions].delay			= (const std::string*)(*connexion_child).child("Delay").text().get();
-			organism[numOrganisms].connexion[numConnexions].g				= (const std::string*)(*connexion_child).child("G").text().get();
+			organism[numOrganisms].connexion[numConnexions].id				= (const std::string*)connexion_child->child("ID").text().get();
+			organism[numOrganisms].connexion[numConnexions].sourceid		= (const std::string*)connexion_child->child("SourceID").text().get();
+			organism[numOrganisms].connexion[numConnexions].targetid		= (const std::string*)connexion_child->child("TargetID").text().get();
+			organism[numOrganisms].connexion[numConnexions].type			= (const std::string*)connexion_child->child("Type").text().get();
+			organism[numOrganisms].connexion[numConnexions].synapsetypeid	= (const std::string*)connexion_child->child("SynapseTypeID").text().get();
+			organism[numOrganisms].connexion[numConnexions].delay			= (const std::string*)connexion_child->child("Delay").text().get();
+			organism[numOrganisms].connexion[numConnexions].g				= (const std::string*)connexion_child->child("G").text().get();
 
 			numConnexions++;
 		}
@@ -373,13 +371,54 @@ int NeuralModel::parse_model_config(char* file_path) {
 	} while (exit != 1);
 
 	return 0;
-}
+};
+
+/*************************************************************************************************************************************\
+|
+|		Get Configuration File Path -
+|			Get the user to enter the path to the .asim model configuration file
+|			Inputs:  None
+|			Outputs: None
+|				**This method will assign the loaded and validated file path to the neural model configuration
+|				  file path to the configFilePath class member.
+|
+\*************************************************************************************************************************************/
+void NeuralModel::get_config_file_path() {
+	std::ifstream	inputConfigFile;
+	std::string		userDefinedPath;
+
+	std::cout << "Enter the file path to the model configuration file (type: .asim): " << std::endl;
+	std::getline(std::cin, userDefinedPath);
+
+	inputConfigFile.open(userDefinedPath);
+	if (inputConfigFile.is_open()) {
+		std::cout << "File found successfully." << std::endl;
+
+		// Change the .asim file ending to xml file format
+	/*	std::size_t found = userDefinedPath.find("asim");
+		if (found != NULL) {
+			userDefinedPath.replace(found, 4, "xml");
+		}
+	*/		
+		// Close the file now that it has been validated
+		inputConfigFile.close();
+		configFilePath = &userDefinedPath[0];
+		return;// userDefinedPath;
+	}
+	else {
+		std::cout << "Error: File could not be opened. Check path entered and try again." << std::endl;
+		//error_handler(ERROR_FILE_OPEN);
+		return;// "NULL";
+	}
+};
 
 /*************************************************************************************************************************************\
 |
 |		Print vector elements -
 |			print a loaded vector element by element
 |			expecting the input to be a vector of structs of vector of structs
+|
+|		NOTE: this will be moved into the class and call the class members from a method to print 1 method per class struct member
 |
 \*************************************************************************************************************************************/
 /*
