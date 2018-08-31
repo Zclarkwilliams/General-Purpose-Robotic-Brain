@@ -2,17 +2,28 @@
 #include <vector>
 #include <utility>
 #include <sstream>
+#include <fstream>
 #include <iostream>
 //	Non-Standard libraries
 //#inculde "error_handler.h
+
+#include "pugixml.hpp"
 
 //	Custom made header files
 #include "model_config_data.hpp"
 #include "system_defines.hpp"
 
-int main(int argc, char** argv ){
+int main(int argc, char** argv){
 	/*	Creating the vector for the class and allocate the room for the vector.	*/
 	std::shared_ptr<NeuralModel> neural_model_main = std::make_shared<NeuralModel>();
+	
+	// Is file valid to open
+/*	if (argc != 2) {
+		std::cout << "\nPlease include 1 argument that is the file path to the neural model configuration (.asim). \n\n" << std::endl;
+		std::system("PAUSE");
+		return 1;
+	}
+*/
 
 	neural_model_main->parse_config_file();
 

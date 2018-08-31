@@ -20,6 +20,18 @@ int NeuralModel::parse_config_file() {
 	//	Identifiers to the specific struct vectors
 	/*	Creating the vector for the class and allocate the room for the vector.	*/
 	std::shared_ptr<NeuralModel> neural_model = std::make_shared<NeuralModel>();
+	
+	// Instantiate the structs for each data set
+	Neurons			neuronStruct;
+	Connexions			connexionStruct;
+	SynapsesSpiking		spikingStruct;
+	SynapsesElectrical  electricalStruct;
+	SynapsesNonSpiking	nonspikingStruct;
+	Organisms		    organismStruct;
+	
+	// Instantiate and generate the organism vector struct
+	std::vector<std::shared_ptr<Organisms>>	organismVector;
+	//std::vector<std::shared_ptr<Organisms>>	organismVector;
 
 	//	Declare vector of organism structs
 	pugi::xml_node_iterator	organism_child;
@@ -39,32 +51,24 @@ int NeuralModel::parse_config_file() {
 	|		Variables -
 	\*****************************************************************/
 	char exit = 0;
+	const char * filePath;
 
 	/*****************************************************************\
 	|		File load and validate section -
 	\*****************************************************************/
-	//std::string strfile = NeuralModel::get_config_file_path();
+	
 	NeuralModel::get_config_file_path();
 
-	//configFilePath = &strfile[0];
-
-	std::cout << "File Path:  " << (*configFilePath) << " Length: " << strlen(configFilePath) << std::endl;
-	
-	//const char *filepath = "C:\Users\Zachary\Documents\A_School\URMP\AgileRobotics_Supplied_Ref_Material\InvertedPendulum_mscfbk_09__17\InvertedPendulum_mscfbk_09__17_Standalone.asim";
-	//const char *filepath = "C:\Users\Zachary\Documents\A_School\URMP\code\include\InvertedPendulum_mscfbk_09__17_Standalone.xml";
-	const char *filepath = "InvertedPendulum_mscfbk_09__17_Standalone.asim";
+	filePath = &configFilePath[0];
 
 	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file(filepath);
+	pugi::xml_parse_result open_result = doc.load_file(filePath);
 
-	if (!result){
+	if (!open_result){
 		//error_handler(ERROR_FILE_LOAD);
-		std::cout << result.description() << std::endl;
-		std::cout << "File " << configFilePath << " empty. Please fix path and try again." << std::endl;
+		std::cout << open_result.description() << filePath << " empty. Please fix path and try again." << std::endl;
 		return 1;
 	}
-
-	std::cout << "***********File loaded sucessfully " << std::endl << std::endl;
 
 	/*****************************************************************\
 	|		Organism declaration and path setup -
@@ -81,34 +85,9 @@ int NeuralModel::parse_config_file() {
 	//	Generate for loop to store organism in each
 	for (organism_child = organismlist.begin(); organism_child != organismlist.end(); organism_child++)
 	{
-		/**********************************************************************************************************************************************************\
-		|
-		|	Organism Section -
-		|
-		\**********************************************************************************************************************************************************/
-
-		organismStruct->organism_name	= (const std::string*)organism_parent.child("Organsim").child("Name").text().get();
-		organismStruct->organism_id		= (const std::string*)organism_parent.child("Organsim").child("ID").text().get();
-		/*
-		neuralmodel.organismStruct->organism_name	= (const std::string*)organism_parent.child("Organsim").child("Name").text().get();
-		neuralmodel.organismStruct->organism_id	= (const std::string*)organism_parent.child("Organsim").child("ID").text().get();
-		neuralmodel.organismStruct[numOrganisms].organism_name	= (const std::string*)organism_parent.child("Organsim").child("Name").text().get();
-		neuralmodel.organismStruct[numOrganisms].organism_id	= (const std::string*)organism_parent.child("Organsim").child("ID").text().get();
-		std::cout << "\tll:\t" << (const std::string*)organism_parent.child("Organsim").child("Name").text().get() << std::endl;
-		std::cout << "\t" << &organism[numOrganisms].organism_name << std::endl;
-		*/
-
-		if ((const std::string*)organism_parent.child("Organsim").child("Name").text().get() != organismStruct->organism_name) {
-			std::cout << "Error: found and stored names are not identical. Please fix and try again." << std::endl;
-			std::cout << "\tFound organism name:\t" << (const std::string*)organism_parent.child("Organsim").child("Name").text().get() << std::endl;
-			std::cout << "\tStored organism name:\t" << organismStruct->organism_name << std::endl;
-		}
-
-		//	Push back new organism created with default constructor
-		organismVector.emplace_back(organismStruct);
-
-		pugi::xml_node neuralModule = (*organism_child).child("NervousSystem").child("NeuralModules").child("NeuralModule");
-
+		//	Setup the parent to child path the depth of the config file we want to start aquiring data
+		pugi::xml_node neuralModule = organism_child->child("NervousSystem").child("NeuralModules").child("NeuralModule");
+		
 		/**********************************************************************************************************************************************************\
 		|
 		|		Neuron Section -
@@ -119,43 +98,61 @@ int NeuralModel::parse_config_file() {
 
 		//	Generate neuron counter for length of vector of structs
 		unsigned int numNeurons = 0;
-		/*
+
 		//	Generate for loop to store neurons in each organism
-		for (neuron_child = neuronlist.begin(); neuron_child != neuronlist.end(); neuron_child++){
-
+		for (neuron_child = neuronlist.begin(); neuron_child != neuronlist.end(); neuron_child++) {
+			//	Load data to struct
+			neuronStruct.name						= (const std::string*)neuron_child->child("Name").text().get();
+	/*		neuronStruct.id							= (const std::string*)neuron_child->child("ID").text().get();
+			neuronStruct.enabled					= (const std::string*)neuron_child->child("Enabled").text().get();
+			neuronStruct.tonicstimulus				= (const std::string*)neuron_child->child("TonicStimulus").text().get();
+			neuronStruct.noise						= (const std::string*)neuron_child->child("Noise").text().get();
+			neuronStruct.restingpot					= (const std::string*)neuron_child->child("RestingPot").text().get();
+			neuronStruct.size						= (const std::string*)neuron_child->child("Size").text().get();
+			neuronStruct.timeconst					= (const std::string*)neuron_child->child("TimeConst").text().get();
+			neuronStruct.initthresh					= (const std::string*)neuron_child->child("InitialThresh").text().get();
+			neuronStruct.relativeaccom				= (const std::string*)neuron_child->child("RelativeAccom").text().get();
+			neuronStruct.accomtimeconst				= (const std::string*)neuron_child->child("AccomTimeConst").text().get();
+			neuronStruct.ahpamp						= (const std::string*)neuron_child->child("AHPAmp").text().get();
+			neuronStruct.ahptimeconst				= (const std::string*)neuron_child->child("AHPTimeConst").text().get();
+			neuronStruct.gmaxca						= (const std::string*)neuron_child->child("GMaxCa").text().get();
+			neuronStruct.burstinitatbottom			= (const std::string*)neuron_child->child("BurstInitAtBottom").text().get();
+			neuronStruct.caactive_id				= (const std::string*)neuron_child->child("CaActivation").child("ID").text().get();
+			neuronStruct.caactive_midpoint			= (const std::string*)neuron_child->child("CaActivation").child("MidPoint").text().get();
+			neuronStruct.caactive_slope				= (const std::string*)neuron_child->child("CaActivation").child("Slope").text().get();
+			neuronStruct.caactive_timeconst			= (const std::string*)neuron_child->child("CaActivation").child("TimeConstant").text().get();
+			neuronStruct.caactive_activatetype		= (const std::string*)neuron_child->child("CaActivation").child("ActivationType").text().get();
+			neuronStruct.cadeactive_id				= (const std::string*)neuron_child->child("CaDeactivation").child("ID").text().get();
+			neuronStruct.cadeactive_midpoint		= (const std::string*)neuron_child->child("CaDeactivation").child("MidPoint").text().get();
+			neuronStruct.cadeactive_slope			= (const std::string*)neuron_child->child("CaDeactivation").child("Slope").text().get();
+			neuronStruct.cadeactive_timeconst		= (const std::string*)neuron_child->child("CaDeactivation").child("TimeConstant").text().get();
+			neuronStruct.cadeactive_activatetype	= (const std::string*)neuron_child->child("CaDeactivation").child("ActivationType").text().get();
+	*/
 			//	Make room for the new member struct by pushing the vector
-			organism[numOrganisms].neuron.push_back(neurs);
-
-			//	Load data to struct vector
-			organism[numOrganisms].neuron[numNeurons].name						= (const std::string*)neuron_child->child("Name").text().get();
-			organism[numOrganisms].neuron[numNeurons].id						= (const std::string*)neuron_child->child("ID").text().get();
-			organism[numOrganisms].neuron[numNeurons].enabled					= (const std::string*)neuron_child->child("Enabled").text().get();
-			organism[numOrganisms].neuron[numNeurons].tonicstimulus				= (const std::string*)neuron_child->child("TonicStimulus").text().get();
-			organism[numOrganisms].neuron[numNeurons].noise						= (const std::string*)neuron_child->child("Noise").text().get();
-			organism[numOrganisms].neuron[numNeurons].restingpot				= (const std::string*)neuron_child->child("RestingPot").text().get();
-			organism[numOrganisms].neuron[numNeurons].size						= (const std::string*)neuron_child->child("Size").text().get();
-			organism[numOrganisms].neuron[numNeurons].timeconst					= (const std::string*)neuron_child->child("TimeConst").text().get();
-			organism[numOrganisms].neuron[numNeurons].initthresh				= (const std::string*)neuron_child->child("InitialThresh").text().get();
-			organism[numOrganisms].neuron[numNeurons].relativeaccom				= (const std::string*)neuron_child->child("RelativeAccom").text().get();
-			organism[numOrganisms].neuron[numNeurons].accomtimeconst			= (const std::string*)neuron_child->child("AccomTimeConst").text().get();
-			organism[numOrganisms].neuron[numNeurons].ahpamp					= (const std::string*)neuron_child->child("AHPAmp").text().get();
-			organism[numOrganisms].neuron[numNeurons].ahptimeconst				= (const std::string*)neuron_child->child("AHPTimeConst").text().get();
-			organism[numOrganisms].neuron[numNeurons].gmaxca					= (const std::string*)neuron_child->child("GMaxCa").text().get();
-			organism[numOrganisms].neuron[numNeurons].burstinitatbottom			= (const std::string*)neuron_child->child("BurstInitAtBottom").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_id				= (const std::string*)neuron_child->child("CaActivation").child("ID").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_midpoint			= (const std::string*)neuron_child->child("CaActivation").child("MidPoint").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_slope			= (const std::string*)neuron_child->child("CaActivation").child("Slope").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_timeconst		= (const std::string*)neuron_child->child("CaActivation").child("TimeConstant").text().get();
-			organism[numOrganisms].neuron[numNeurons].caactive_activatetype		= (const std::string*)neuron_child->child("CaActivation").child("ActivationType").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_id				= (const std::string*)neuron_child->child("CaDeactivation").child("ID").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_midpoint		= (const std::string*)neuron_child->child("CaDeactivation").child("MidPoint").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_slope			= (const std::string*)neuron_child->child("CaDeactivation").child("Slope").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_timeconst		= (const std::string*)neuron_child->child("CaDeactivation").child("TimeConstant").text().get();
-			organism[numOrganisms].neuron[numNeurons].cadeactive_activatetype	= (const std::string*)neuron_child->child("CaDeactivation").child("ActivationType").text().get();
+			organismStruct.neuronVector.emplace_back(std::make_shared<Neurons>(neuronStruct));
+			
+			// Increase neuron counter
 			numNeurons++;
 		}
 		std::cout << "total number of neurons: " << numNeurons << std::endl;
-*/
+
+		//	Check if the loaded vector is empty or has element
+		if (organismStruct.neuronVector.empty()) {
+			std::cout << "The vector loaded is empty." << std::endl;
+			//error_handler(ERROR_NEURON_VECTOR_EMPTY);
+			return 1;
+		}
+		else if (organismStruct.neuronVector.size() != numNeurons) {
+			std::cout << "Neuron characteristic vector not same size as number of neurons counted in config file! Resolve and try again." << std::endl;
+			//error_handler(ERROR_NEURON_VECTOR_SIZE_MISMATCH);
+			return 1;
+		}
+		
+		//	Print the found elements
+		for (int i = 0, size = organismStruct.neuronVector.size(); i < size; ++i) {
+			std::cout << "organism name:\t" << &organismStruct.neuronVector[i] << std::endl;
+		}
+		
 		/**********************************************************************************************************************************************************\
 		|
 		|		Synapse Section - Spiking / Non-spiking / Electrical
@@ -173,59 +170,55 @@ int NeuralModel::parse_config_file() {
 
 		//	Generate spiking synapse counter for length of vector of structs
 		unsigned int numSpikingSynapses = 0;
-/*
+
 		//	generate for loop to store neuronal spiking synapse in each organism
-		for (synapse_spiking_child = synapse_spiking_list.begin(); synapse_spiking_child != synapse_spiking_list.end(); synapse_spiking_child++){
-
+		for (synapse_spiking_child = synapse_spiking_list.begin(); synapse_spiking_child != synapse_spiking_list.end(); synapse_spiking_child++) {
+			// Load the spiking synapse values into a struct
+			spikingStruct.name			= (const std::string*)synapse_spiking_child->child("Name").text().get();
+			spikingStruct.id			= (const std::string*)synapse_spiking_child->child("ID").text().get();
+			spikingStruct.type			= (const std::string*)synapse_spiking_child->child("Type").text().get();
+			spikingStruct.equil			= (const std::string*)synapse_spiking_child->child("Equil").text().get();
+			spikingStruct.synamp		= (const std::string*)synapse_spiking_child->child("SynAmp").text().get();
+			spikingStruct.decay			= (const std::string*)synapse_spiking_child->child("Decay").text().get();
+			spikingStruct.relfacil		= (const std::string*)synapse_spiking_child->child("RelFacil").text().get();
+			spikingStruct.facildecay	= (const std::string*)synapse_spiking_child->child("FacilDecay").text().get();
+			spikingStruct.voltdep		= (const std::string*)synapse_spiking_child->child("VoltDep").text().get();
+			spikingStruct.maxrelcond	= (const std::string*)synapse_spiking_child->child("MaxRelCond").text().get();
+			spikingStruct.satpspot		= (const std::string*)synapse_spiking_child->child("SatPSPot").text().get();
+			spikingStruct.threshpspot	= (const std::string*)synapse_spiking_child->child("ThreshPSPot").text().get();
+			spikingStruct.hebbian		= (const std::string*)synapse_spiking_child->child("Hebbian").text().get();
+			spikingStruct.maxaugcond	= (const std::string*)synapse_spiking_child->child("MaxAugCond").text().get();
+			spikingStruct.learninginc	= (const std::string*)synapse_spiking_child->child("LearningInc").text().get();
+			spikingStruct.learningtime	= (const std::string*)synapse_spiking_child->child("LearningTime").text().get();
+			spikingStruct.allowforget	= (const std::string*)synapse_spiking_child->child("AllowForget").text().get();
+			spikingStruct.forgettime	= (const std::string*)synapse_spiking_child->child("ForgetTime").text().get();
+			spikingStruct.consolidation	= (const std::string*)synapse_spiking_child->child("Consolidation").text().get();
+			std::cout << spikingStruct.name << std::endl;
 			//	Make room for the new member struct by pushing the vector
-			organism[numOrganisms].synapse_spiking.push_back(synspk);
+			organismStruct.spikingVector.emplace_back(spikingStruct);
 
-			/*
-			std::cout << "Name: "			<< synapse_spiking_child->child("Name").child_value()				<< std::endl;
-			std::cout << "\tID: "			<< synapse_spiking_child->child("ID").child_value()				<< std::endl;
-			std::cout << "\tType: "			<< synapse_spiking_child->child("Type").child_value()				<< std::endl;
-			std::cout << "\tEquil: "			<< synapse_spiking_child->child("Equil").child_value()			<< std::endl;
-			std::cout << "\tSyn Amp: "		<< synapse_spiking_child->child("SynAmp").child_value()			<< std::endl;
-			std::cout << "\tDecay: "			<< synapse_spiking_child->child("Decay").child_value()			<< std::endl;
-			std::cout << "\tRel Facil: "		<< synapse_spiking_child->child("RelFacil").child_value()			<< std::endl;
-			std::cout << "\tFacil Decay: "	<< synapse_spiking_child->child("FacilDecay").child_value()		<< std::endl;
-			std::cout << "\tVolt Dep: "		<< synapse_spiking_child->child("VoltDep").child_value()			<< std::endl;
-			std::cout << "\tMax Rel Cond: "	<< synapse_spiking_child->child("MaxRelCond").child_value()		<< std::endl;
-			std::cout << "\tSat PS Pot: "	<< synapse_spiking_child->child("SatPSPot").child_value()			<< std::endl;
-			std::cout << "\tThresh PS Pot: "	<< synapse_spiking_child->child("ThreshPSPot").child_value()		<< std::endl;
-			std::cout << "\tHebbian: "		<< synapse_spiking_child->child("Hebbian").child_value()			<< std::endl;
-			std::cout << "\tMax Aug Cond: "	<< synapse_spiking_child->child("MaxAugCond").child_value()		<< std::endl;
-			std::cout << "\tLearning Inc: "	<< synapse_spiking_child->child("LearningInc").child_value()		<< std::endl;
-			std::cout << "\tLearning Time: "	<< synapse_spiking_child->child("LearningTime").child_value()		<< std::endl;
-			std::cout << "\tAllow Forget: "	<< synapse_spiking_child->child("AllowForget").child_value()		<< std::endl;
-			std::cout << "\tForget Time: "	<< synapse_spiking_child->child("ForgetTime").child_value()		<< std::endl;
-			std::cout << "\tConsolidation: "	<< synapse_spiking_child->child("Consolidation").child_value()	<< std::endl;
-			*/
-/*
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].name				= (const std::string*)synapse_spiking_child->child("Name").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].id				= (const std::string*)synapse_spiking_child->child("ID").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].type				= (const std::string*)synapse_spiking_child->child("Type").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].equil			= (const std::string*)synapse_spiking_child->child("Equil").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].synamp			= (const std::string*)synapse_spiking_child->child("SynAmp").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].decay			= (const std::string*)synapse_spiking_child->child("Decay").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].relfacil			= (const std::string*)synapse_spiking_child->child("RelFacil").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].facildecay		= (const std::string*)synapse_spiking_child->child("FacilDecay").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].voltdep			= (const std::string*)synapse_spiking_child->child("VoltDep").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxrelcond		= (const std::string*)synapse_spiking_child->child("MaxRelCond").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].satpspot			= (const std::string*)synapse_spiking_child->child("SatPSPot").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].threshpspot		= (const std::string*)synapse_spiking_child->child("ThreshPSPot").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].hebbian			= (const std::string*)synapse_spiking_child->child("Hebbian").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].maxaugcond		= (const std::string*)synapse_spiking_child->child("MaxAugCond").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learninginc		= (const std::string*)synapse_spiking_child->child("LearningInc").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].learningtime		= (const std::string*)synapse_spiking_child->child("LearningTime").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].allowforget		= (const std::string*)synapse_spiking_child->child("AllowForget").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].forgettime		= (const std::string*)synapse_spiking_child->child("ForgetTime").text().get();
-			organism[numOrganisms].synapse_spiking[numSpikingSynapses].consolidation	= (const std::string*)synapse_spiking_child->child("Consolidation").text().get();
-
+			// Increase spiking synapse counter
 			numSpikingSynapses++;
 		}
 		std::cout << "total number of spiking synapses: " << numSpikingSynapses << std::endl;
-*/
+
+		//	Check if the loaded vector is empty or has element
+		if (organismStruct.spikingVector.empty()) {
+			std::cout << "The spiking synapse vector loaded is empty." << std::endl;
+			//error_handler(ERROR_SPIKING_VECTOR_EMPTY);
+			return 1;
+		}
+		else if (organismStruct.spikingVector.size() != numSpikingSynapses) {
+			std::cout << "Spiking synapse characteristic vector size and number of spiking synapses from config file mismatch! Resolve and try again." << std::endl;
+			//error_handler(ERROR_SPIKING_VECTOR_SIZE_MISMATCH);
+			return 1;
+		}
+
+		//	Print the found elements
+		for (int i = 0, size = organismStruct.spikingVector.size(); i < size; ++i) {
+			std::cout << "spikingVector name:\t" << &organismStruct.spikingVector[i] << std::endl;
+		}
+
 		/**********************************************************************************************************************************************************\
 		|***************************************************************	Non-Spiking Synapses	***************************************************************|
 		\**********************************************************************************************************************************************************/
@@ -233,13 +226,10 @@ int NeuralModel::parse_config_file() {
 
 		//	Generate nonspiking synapse counter for length of vector of structs
 		unsigned int numNonSpikeSynapses = 0;
-/*
+		
 		//	Generate for loop to store neuronal nonspiking in each organism
 		for (synapse_nonspiking_child = synapse_nonspiking_list.begin(); synapse_nonspiking_child != synapse_nonspiking_list.end(); synapse_nonspiking_child++){
-
-			//	Make room for the new member struct by pushing the vector
-			organism[numOrganisms].synapse_nonspiking.push_back(synnonspk);
-*/
+			// Load the non-spiking synapse values into the struct
 			/*
 			std::cout << "Name: "		<< synapse_nonspiking_child->child("Name").child_value()		<< std::endl;
 			std::cout << "\tID: "		<< synapse_nonspiking_child->child("ID").child_value()		<< std::endl;
@@ -248,17 +238,33 @@ int NeuralModel::parse_config_file() {
 			std::cout << "\tSynAmp: "	<< synapse_nonspiking_child->child("SynAmp").child_value()	<< std::endl;
 			std::cout << "\tSat. V: "	<< synapse_nonspiking_child->child("SaturateV").child_value()	<< std::endl;
 			*/
-/*
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].name			= (const std::string*)synapse_nonspiking_child->child("Name").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].id			= (const std::string*)synapse_nonspiking_child->child("ID").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].type			= (const std::string*)synapse_nonspiking_child->child("Type").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].equil		= (const std::string*)synapse_nonspiking_child->child("Equil").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].synamp		= (const std::string*)synapse_nonspiking_child->child("SynAmp").text().get();
-			organism[numOrganisms].synapse_nonspiking[numNonSpikeSynapses].saturatev	= (const std::string*)synapse_nonspiking_child->child("SaturateV").text().get();
+			nonspikingStruct.name		= (const std::string*)synapse_nonspiking_child->child("Name").text().get();
+			nonspikingStruct.id			= (const std::string*)synapse_nonspiking_child->child("ID").text().get();
+			nonspikingStruct.type		= (const std::string*)synapse_nonspiking_child->child("Type").text().get();
+			nonspikingStruct.equil		= (const std::string*)synapse_nonspiking_child->child("Equil").text().get();
+			nonspikingStruct.synamp		= (const std::string*)synapse_nonspiking_child->child("SynAmp").text().get();
+			nonspikingStruct.saturatev	= (const std::string*)synapse_nonspiking_child->child("SaturateV").text().get();
+
+			//	Make room for the new member struct by pushing the vector
+			organismStruct.nonspikingVector.emplace_back(nonspikingStruct);
+
+			// Increase spiking synapse counter
 			numNonSpikeSynapses++;
 		}
-		std::cout << "total number of nonspiking synapses: " << numNonSpikeSynapses << std::endl;
-*/
+		std::cout << "total number of non-spiking synapses: " << numNonSpikeSynapses << std::endl;
+
+		//	Check if the loaded vector is empty or has element
+		if (organismStruct.nonspikingVector.empty()) {
+			std::cout << "The non-spiking synapse vector loaded is empty." << std::endl;
+			//error_handler(ERROR_NONSPIKING_VECTOR_EMPTY);
+			return 1;
+		}
+		else if (organismStruct.nonspikingVector.size() != numNonSpikeSynapses) {
+			std::cout << "Non-spiking synapse characteristic vector size and number of non-spiking synapses from config file mismatch! Resolve and try again." << std::endl;
+			//error_handler(ERROR_NONSPIKING_VECTOR_SIZE_MISMATCH);
+			return 1;
+		}
+
 		/**********************************************************************************************************************************************************\
 		|***************************************************************	Electrical Synapses		***************************************************************|
 		\**********************************************************************************************************************************************************/
@@ -266,13 +272,10 @@ int NeuralModel::parse_config_file() {
 
 		//	Generate electrical synapse counter for length of vector of structs
 		unsigned int numElectricalSynapses = 0;
-/*
+		
 		//	Generate for loop to store neuronal electrical synapse in each organism
-		for (synapse_elec_child = synapse_elec_list.begin(); synapse_elec_child != synapse_elec_list.end(); synapse_elec_child++){
-
-			//	Make room for the new member struct by pushing the vector
-			organism[numOrganisms].synapse_electrical.push_back(synelec);
-*/
+		for (synapse_elec_child = synapse_elec_list.begin(); synapse_elec_child != synapse_elec_list.end(); synapse_elec_child++) {
+			// Load the electrical synapse values into the struct
 			/*
 			std::cout << "Name: "		<< synapse_elec_child->child("Name").child_value()		<< std::endl;
 			std::cout << "\tID: "		<< synapse_elec_child->child("ID").child_value()			<< std::endl;
@@ -282,19 +285,34 @@ int NeuralModel::parse_config_file() {
 			std::cout << "\tTurn On V: "	<< synapse_elec_child->child("TurnOnV").child_value()		<< std::endl;
 			std::cout << "\tSat. V: "	<< synapse_elec_child->child("SaturateV").child_value()	<< std::endl;
 			*/
-/*
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].name		= (const std::string*)synapse_elec_child->child("Name").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].id			= (const std::string*)synapse_elec_child->child("ID").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].type		= (const std::string*)synapse_elec_child->child("Type").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].lowcoup	= (const std::string*)synapse_elec_child->child("LowCoup").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].hicoup		= (const std::string*)synapse_elec_child->child("HiCoup").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].turnonv	= (const std::string*)synapse_elec_child->child("TurnOnV").text().get();
-			organism[numOrganisms].synapse_electrical[numElectricalSynapses].saturatev	= (const std::string*)synapse_elec_child->child("SaturateV").text().get();
+			electricalStruct.name		= (const std::string*)synapse_elec_child->child("Name").text().get();
+			electricalStruct.id			= (const std::string*)synapse_elec_child->child("ID").text().get();
+			electricalStruct.type		= (const std::string*)synapse_elec_child->child("Type").text().get();
+			electricalStruct.lowcoup	= (const std::string*)synapse_elec_child->child("LowCoup").text().get();
+			electricalStruct.hicoup		= (const std::string*)synapse_elec_child->child("HiCoup").text().get();
+			electricalStruct.turnonv	= (const std::string*)synapse_elec_child->child("TurnOnV").text().get();
+			electricalStruct.saturatev	= (const std::string*)synapse_elec_child->child("SaturateV").text().get();
 
+			//	Make room for the new member struct by pushing the vector
+			organismStruct.electricalVector.emplace_back(electricalStruct);
+
+			// Increase electrical synapse counter
 			numElectricalSynapses++;
 		}
 		std::cout << "total number of electrical synapses: " << numElectricalSynapses << std::endl;
-*/
+
+		//	Check if the loaded vector is empty or has element
+		if (organismStruct.electricalVector.empty()) {
+			std::cout << "The electrical synapse vector loaded is empty." << std::endl;
+			//error_handler(ERROR_ELECTRICAL_VECTOR_EMPTY);
+			return 1;
+		}
+		else if (organismStruct.electricalVector.size() != numElectricalSynapses) {
+			std::cout << "Electrical synapse characteristic vector size and number of electrical synapses from config file mismatch! Resolve and try again." << std::endl;
+			//error_handler(ERROR_ELECTRICAL_VECTOR_SIZE_MISMATCH);
+			return 1;
+		}
+
 		/*************************************************************************************************************************************\
 		|
 		|		Connexion Section -
@@ -305,13 +323,10 @@ int NeuralModel::parse_config_file() {
 
 		//	Generate connexion counter for length of vector of structs
 		unsigned int numConnexions = 0;
-/*
+		
 		//	Generate for loop to store neuronal connexions in each organism
-		for (connexion_child = connexion_list.begin(); connexion_child != connexion_list.end(); connexion_child++){
-
-			//	Make room for the new member struct by pushing the vector
-			organism[numOrganisms].connexion.push_back(conxs);
-
+		for (connexion_child = connexion_list.begin(); connexion_child != connexion_list.end(); connexion_child++){		
+			// Load the connexion values into the struct
 			/*
 			std::cout << "Name: "		<< connexion_child->child("Name").child_value()		<< std::endl;
 			std::cout << "\tID: "		<< connexion_child->child("ID").child_value()			<< std::endl;
@@ -320,30 +335,39 @@ int NeuralModel::parse_config_file() {
 			std::cout << "\tSynAmp: "	<< connexion_child->child("SynAmp").child_value()		<< std::endl;
 			std::cout << "\tSat. V: "	<< connexion_child->child("SaturateV").child_value()	<< std::endl;
 			*/
-/*
-			organism[numOrganisms].connexion[numConnexions].id				= (const std::string*)connexion_child->child("ID").text().get();
-			organism[numOrganisms].connexion[numConnexions].sourceid		= (const std::string*)connexion_child->child("SourceID").text().get();
-			organism[numOrganisms].connexion[numConnexions].targetid		= (const std::string*)connexion_child->child("TargetID").text().get();
-			organism[numOrganisms].connexion[numConnexions].type			= (const std::string*)connexion_child->child("Type").text().get();
-			organism[numOrganisms].connexion[numConnexions].synapsetypeid	= (const std::string*)connexion_child->child("SynapseTypeID").text().get();
-			organism[numOrganisms].connexion[numConnexions].delay			= (const std::string*)connexion_child->child("Delay").text().get();
-			organism[numOrganisms].connexion[numConnexions].g				= (const std::string*)connexion_child->child("G").text().get();
+			
+			connexionStruct.id				= (const std::string*)connexion_child->child("ID").text().get();
+			connexionStruct.sourceid		= (const std::string*)connexion_child->child("SourceID").text().get();
+			connexionStruct.targetid		= (const std::string*)connexion_child->child("TargetID").text().get();
+			connexionStruct.type			= (const std::string*)connexion_child->child("Type").text().get();
+			connexionStruct.synapsetypeid	= (const std::string*)connexion_child->child("SynapseTypeID").text().get();
+			connexionStruct.delay			= (const std::string*)connexion_child->child("Delay").text().get();
+			connexionStruct.g				= (const std::string*)connexion_child->child("G").text().get();
+			
+			//	Make room for the new member struct by pushing the vector
+			organismStruct.connexionVector.emplace_back(connexionStruct);
 
+			// Increase electrical synapse counter
 			numConnexions++;
 		}
 
-		//	Test the size of the found loaded connexions
-		if (organism[numOrganisms].connexion.size() != numConnexions){
-			//error_handler(WARNING_CONNEXION_SIZE_MISMATCH);
-			std::cout << "ERROR: Connexion count mismatch. Number of connexions in file: " << organism[numOrganisms].connexion.size() << " number of connexions processed " << numConnexions << std::endl << std::endl;
+		//	Check if the loaded vector is empty or has element
+		if (organismStruct.connexionVector.empty()) {
+			std::cout << "The connexion vector loaded is empty." << std::endl;
+			//error_handler(ERROR_ELECTRICAL_VECTOR_EMPTY);
 			return 1;
 		}
-*/
+		//	Test the size of the found loaded connexions
+		if (organismStruct.connexionVector.size() != numConnexions){
+			std::cout << "Connexion characteristic vector size and number of connexion from config file mismatch! Resolve and try again." << std::endl;
+			//error_handler(ERROR_CONNEXION_VECTOR_SIZE_MISMATCH);
+			return 1;
+		}
 		//	Print the size of the vector of struct
 		//std::cout << std::endl << "Connexion list of size " << organism[numOrganisms].connexion.size() << " found." << std::endl;
 		//std::cout << "Elements found and loaded: " << std::endl;
 
-		/*
+	/*
 		//	Print the elements
 		for (int i = 0, size = organism[numOrganisms].connexion.size(); i < size; ++i){
 			std::cout << "\tID\t\t"				<< &organism[numOrganisms].connexion[i].id				<< std::endl;
@@ -356,12 +380,32 @@ int NeuralModel::parse_config_file() {
 			std::cout << "	" << std::endl;
 		}
 		std::cout << "Organism Size:" << organism.size() << std::endl;
-		*/
-	}
+	*/
 	
+		/**********************************************************************************************************************************************************\
+		|
+		|	Organism Section -
+		|
+		\**********************************************************************************************************************************************************/
+
+		organismStruct.organism_id = (const std::string*)organism_parent.child("Organsim").child("ID").text().get();
+		organismStruct.organism_name = (const std::string*)organism_parent.child("Organsim").child("Name").text().get();
+
+
+		if ((const std::string*)organism_parent.child("Organsim").child("Name").text().get() != organismStruct.organism_name) {
+			std::cout << "Error: found and stored names are not identical. Please fix and try again." << std::endl;
+			std::cout << "\tFound organism name:\t" << (const std::string*)organism_parent.child("Organsim").child("Name").text().get() << std::endl;
+			std::cout << "\tStored organism name:\t" << organismStruct.organism_name << std::endl;
+		}
+
+		//	Push back new organism created with default constructor
+		organismVector.emplace_back(std::make_shared<Organisms>(organismStruct));
+	}
+
 	/**************************************************************************************\
 	|		exit if user has time to read and validate stored data / printed data
 	\**************************************************************************************/
+	/*
 	do {
 		std::cout << "Press 'e' to exit: ";
 		std::cin >> exit;
@@ -369,7 +413,7 @@ int NeuralModel::parse_config_file() {
 			exit = 1;
 		}
 	} while (exit != 1);
-
+	*/
 	return 0;
 };
 
@@ -384,31 +428,25 @@ int NeuralModel::parse_config_file() {
 |
 \*************************************************************************************************************************************/
 void NeuralModel::get_config_file_path() {
-	std::ifstream	inputConfigFile;
-	std::string		userDefinedPath;
+	const char *	testPath;
 
 	std::cout << "Enter the file path to the model configuration file (type: .asim): " << std::endl;
-	std::getline(std::cin, userDefinedPath);
+	std::cin >> configFilePath;
 
-	inputConfigFile.open(userDefinedPath);
-	if (inputConfigFile.is_open()) {
-		std::cout << "File found successfully." << std::endl;
+	testPath = &configFilePath[0];
 
-		// Change the .asim file ending to xml file format
-	/*	std::size_t found = userDefinedPath.find("asim");
-		if (found != NULL) {
-			userDefinedPath.replace(found, 4, "xml");
-		}
-	*/		
-		// Close the file now that it has been validated
-		inputConfigFile.close();
-		configFilePath = &userDefinedPath[0];
-		return;// userDefinedPath;
+	pugi::xml_document doc;
+	pugi::xml_parse_result open_result = doc.load_file(testPath);
+
+	if (open_result) {
+		std::cout << open_result.description() << std::endl;
+		return;
 	}
 	else {
-		std::cout << "Error: File could not be opened. Check path entered and try again." << std::endl;
+		std::cout << "Error: " << open_result.description() << configFilePath << " empty. Please fix path and try again." << std::endl;
+		//std::cout << "Error: File could not be opened. Check path entered and try again." << std::endl;
 		//error_handler(ERROR_FILE_OPEN);
-		return;// "NULL";
+		return;
 	}
 };
 
@@ -436,3 +474,8 @@ void printVect(std::vector<std::string>const& vect) {
 	}
 }
 */
+
+void NeuralModel::print_val(std::string tag, const std::string& value) {
+	std::cout << tag << ": " << value << std::endl;
+	return;
+};

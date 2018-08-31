@@ -93,33 +93,29 @@ class NeuralModel {
 			const std::string* 	neuralmodule_id;
 			const std::string* 	neuralmodule_name;
 			// Generate the vector structs for each section of the model
-			std::vector<std::shared_ptr<Neurons>>               neuronVector;
+		/*	std::vector<std::shared_ptr<Neurons>>               neuronVector;
 			std::vector<std::shared_ptr<Connexions>>            connexionVector;
 			std::vector<std::shared_ptr<SynapsesSpiking>>       spikingVector;
 			std::vector<std::shared_ptr<SynapsesElectrical>>    electricalVector;
 			std::vector<std::shared_ptr<SynapsesNonSpiking>>    nonspikingVector;
+		*/
+			std::vector<Neurons>               neuronVector;
+			std::vector<Connexions>            connexionVector;
+			std::vector<SynapsesSpiking>       spikingVector;
+			std::vector<SynapsesElectrical>    electricalVector;
+			std::vector<SynapsesNonSpiking>    nonspikingVector;
 		} Organisms;
 
-		// Instantiate and generate the organism vector struct
-		std::vector<std::shared_ptr<Organisms>>	organismVector;
-
-		// Instantiate the structs for each data set
-		Neurons				neuronStruct;
-		Connexions			connexionStruct;
-		SynapsesSpiking		spikingStruct;
-		SynapsesElectrical  electricalStruct;
-		SynapsesNonSpiking	nonspikingStruct;
-		Organisms*		    organismStruct;
-
 		// Variable member of class to hold the path to the Animatlab Neural Model Configuration
-		const char *configFilePath;
+		std::string configFilePath;
 
 		// Consructor and Destructor functions for class
 		NeuralModel() {}
 		~NeuralModel() {}
 		
 		// Access the main function that will parse and get datat from config file
-		int parse_config_file(void);
+		int parse_config_file();
 		void get_config_file_path(void);
+		void print_val(std::string, const std::string&);
 		//void printVect(std::vector<std::string>const& vect);
 };
