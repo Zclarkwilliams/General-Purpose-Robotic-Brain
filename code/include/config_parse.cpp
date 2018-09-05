@@ -50,7 +50,7 @@ int NeuralModel::parse_config_file() {
 	/*****************************************************************\
 	|		Variables -
 	\*****************************************************************/
-	char exit = 0;
+	//char end = 0;
 	const char * filePath;
 
 	/*****************************************************************\
@@ -400,6 +400,7 @@ int NeuralModel::parse_config_file() {
 
 		//	Push back new organism created with default constructor
 		organismVector.emplace_back(std::make_shared<Organisms>(organismStruct));
+		numOrganisms++;
 	}
 
 	/**************************************************************************************\
@@ -408,11 +409,11 @@ int NeuralModel::parse_config_file() {
 	/*
 	do {
 		std::cout << "Press 'e' to exit: ";
-		std::cin >> exit;
-		if (exit == 'e' || exit == 'E'){
-			exit = 1;
+		std::cin >> end;
+		if (end == 'e' || end == 'E'){
+			end = 1;
 		}
-	} while (exit != 1);
+	} while (end != 1);
 	*/
 	return 0;
 };
