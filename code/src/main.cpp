@@ -10,7 +10,7 @@
 //#include "pugixml.hpp"
 
 //	Custom made header files
-#include "include/model_config_data.hpp"
+#include "model_config_data.hpp"
 #include "system_defines.hpp"
 
 int main(int argc, char** argv){

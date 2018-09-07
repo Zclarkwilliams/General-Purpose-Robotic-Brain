@@ -12,3 +12,5 @@ CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o
  /home/nvidia/dev/agile_robotics_contoller/code/include/pugixml.hpp
 CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o
  /home/nvidia/dev/agile_robotics_contoller/code/src/main.cpp
+ code/include/model_config_data.hpp
+ code/include/system_defines.hpp

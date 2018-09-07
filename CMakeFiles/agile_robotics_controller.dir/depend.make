@@ -11,4 +11,6 @@ CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o: code/includ
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o: code/include/pugixml.hpp
 
 CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/src/main.cpp
+CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/include/model_config_data.hpp
+CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/include/system_defines.hpp
 

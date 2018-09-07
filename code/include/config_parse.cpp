@@ -22,7 +22,7 @@ int NeuralModel::parse_config_file() {
 	std::shared_ptr<NeuralModel> neural_model = std::make_shared<NeuralModel>();
 	
 	// Instantiate the structs for each data set
-	Neurons			neuronStruct;
+	Neurons				neuronStruct;
 	Connexions			connexionStruct;
 	SynapsesSpiking		spikingStruct;
 	SynapsesElectrical  electricalStruct;
