@@ -14,6 +14,7 @@ using namespace std;
 //  Non-Standard headers and libraries
 #include "system_defines.h"
 
+<<<<<<< HEAD
 enum class ErrorLevel{
 //	System Error Levels
 	ERROR_FILE_LOAD
@@ -32,6 +33,12 @@ class ErrorHandler {
     private:
     	unsigned char origin_byte;
     	unsigned char error_byte;
+=======
+class error_handler {
+    private:
+      unsigned char origin_byte:8;
+      unsigned char error_byte:8;
+>>>>>>> origin/master
 
     public:
         //	Error Handler Functions
@@ -42,8 +49,11 @@ class ErrorHandler {
 };
 
 int error_handler(uint16_t err) {
+<<<<<<< HEAD
 uint8_t n = 8;
 uint16_t err_bit_format = 16;
+=======
+>>>>>>> origin/master
 
 err_bit_format * n = &err;
 uint8_t err_origin = n->origin_byte;
