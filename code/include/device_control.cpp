@@ -4,6 +4,9 @@
 *
 */
 
-__global__ void getOrganismData(struct organism* org_ptr) {
+__global__ 
+void getOrganismData(struct organism* org_ptr) {
 	
+
+
 }
