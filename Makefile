@@ -150,6 +150,33 @@ code/include/config_parse.cpp.s:
 	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.s
 .PHONY : code/include/config_parse.cpp.s
 
+code/include/device_control.o: code/include/device_control.cpp.o
+
+.PHONY : code/include/device_control.o
+
+# target to build an object file
+code/include/device_control.cpp.o:
+	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/device_control.cpp.o
+.PHONY : code/include/device_control.cpp.o
+
+code/include/device_control.i: code/include/device_control.cpp.i
+
+.PHONY : code/include/device_control.i
+
+# target to preprocess a source file
+code/include/device_control.cpp.i:
+	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/device_control.cpp.i
+.PHONY : code/include/device_control.cpp.i
+
+code/include/device_control.s: code/include/device_control.cpp.s
+
+.PHONY : code/include/device_control.s
+
+# target to generate assembly for a file
+code/include/device_control.cpp.s:
+	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/device_control.cpp.s
+.PHONY : code/include/device_control.cpp.s
+
 code/include/pugixml.o: code/include/pugixml.cpp.o
 
 .PHONY : code/include/pugixml.o
@@ -216,6 +243,9 @@ help:
 	@echo "... code/include/config_parse.o"
 	@echo "... code/include/config_parse.i"
 	@echo "... code/include/config_parse.s"
+	@echo "... code/include/device_control.o"
+	@echo "... code/include/device_control.i"
+	@echo "... code/include/device_control.s"
 	@echo "... code/include/pugixml.o"
 	@echo "... code/include/pugixml.i"
 	@echo "... code/include/pugixml.s"

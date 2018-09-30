@@ -6,11 +6,15 @@ CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o: code/i
 CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o: code/include/pugiconfig.hpp
 CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o: code/include/pugixml.hpp
 
+CMakeFiles/agile_robotics_controller.dir/code/include/device_control.cpp.o: code/include/device_control.cpp
+
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o: code/include/pugiconfig.hpp
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o: code/include/pugixml.cpp
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o: code/include/pugixml.hpp
 
 CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/src/main.cpp
 CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/include/model_config_data.hpp
+CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/include/pugiconfig.hpp
+CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/include/pugixml.hpp
 CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o: code/include/system_defines.hpp
 

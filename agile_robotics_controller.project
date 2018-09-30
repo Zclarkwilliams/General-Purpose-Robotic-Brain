@@ -2,6 +2,7 @@
 <CodeLite_Project Name="agile_robotics_controller" InternalType="">
   <VirtualDirectory Name="src">
     <File Name="code/include/config_parse.cpp"/>
+    <File Name="code/include/device_control.cpp"/>
     <File Name="code/include/pugixml.cpp"/>
     <File Name="code/src/main.cpp"/>
   </VirtualDirectory>

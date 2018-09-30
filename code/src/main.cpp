@@ -4,18 +4,24 @@
 #include <sstream>
 #include <fstream>
 #include <iostream>
+
 //	Non-Standard libraries
 //#inculde "error_handler.h
-
-//#include "pugixml.hpp"
+#include "pugixml.hpp"
 
 //	Custom made header files
 #include "model_config_data.hpp"
 #include "system_defines.hpp"
 
+void generate_model(std::shared_ptr<NeuralModel> neuralModel) {
+	// Transfer model configuration into the GPU cache
+	neuralModel->transferOrganism();
+};
+
+
 int main(int argc, char** argv){
 	/*	Creating the vector for the class and allocate the room for the vector.	*/
-	std::shared_ptr<NeuralModel> neural_model_main = std::make_shared<NeuralModel>();
+	std::shared_ptr<NeuralModel> neuralModelMain = std::make_shared<NeuralModel>();
 	
 	// Is file valid to open
 /*	if (argc != 2) {
@@ -25,7 +31,8 @@ int main(int argc, char** argv){
 	}
 */
 
-	neural_model_main->parse_config_file();
+	neuralModelMain->parse_config_file();
+	generate_model(neuralModelMain);
 
 	/*
     Organisms organism;
@@ -40,8 +47,9 @@ int main(int argc, char** argv){
 		cout << "	" << endl;
 	};
 	*/
-	std::system("PAUSE");
-	//std::cin.get();
+
+	//std::system("PAUSE");
+	std::cin.get();
 
 	return 0;
-}
+};

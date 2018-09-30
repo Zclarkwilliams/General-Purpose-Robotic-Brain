@@ -8,90 +8,91 @@
 class NeuralModel {
     public:
         typedef struct {
-            const std::string* name;
-            const std::string* id;
-            const std::string* enabled;
-            const std::string* tonicstimulus;
-            const std::string* noise;
-            const std::string* restingpot;
-            const std::string* size;
-            const std::string* timeconst;
-            const std::string* initthresh;
-            const std::string* relativeaccom;
-            const std::string* accomtimeconst;
-            const std::string* ahpamp;
-            const std::string* ahptimeconst;
-            const std::string* gmaxca;
-            const std::string* burstinitatbottom;
-            const std::string* caactive_id;
-            const std::string* caactive_midpoint;
-            const std::string* caactive_slope;
-            const std::string* caactive_timeconst;
-            const std::string* caactive_activatetype;
-            const std::string* cadeactive_id;
-            const std::string* cadeactive_midpoint;
-            const std::string* cadeactive_slope;
-			const std::string* cadeactive_timeconst;
-			const std::string* cadeactive_activatetype;
+            std::string name;
+			std::string id;
+            std::string enabled;
+            std::string tonicstimulus;
+            std::string noise;
+            std::string restingpot;
+            std::string size;
+            std::string timeconst;
+            std::string initthresh;
+            std::string relativeaccom;
+            std::string accomtimeconst;
+            std::string ahpamp;
+            std::string ahptimeconst;
+            std::string gmaxca;
+            std::string burstinitatbottom;
+            std::string caactive_id;
+            std::string caactive_midpoint;
+            std::string caactive_slope;
+            std::string caactive_timeconst;
+            std::string caactive_activatetype;
+            std::string cadeactive_id;
+            std::string cadeactive_midpoint;
+            std::string cadeactive_slope;
+			std::string cadeactive_timeconst;
+			std::string cadeactive_activatetype;
 		} Neurons;
 
 		typedef struct {
-			const std::string* name;
-			const std::string* id;
-			const std::string* type;
-			const std::string* equil;
-			const std::string* synamp;
-			const std::string* saturatev;
+			std::string name;
+			std::string id;
+			std::string type;
+			std::string equil;
+			std::string synamp;
+			std::string saturatev;
 		} SynapsesNonSpiking;
 
 		typedef struct {
-			const std::string* name;
-			const std::string* id;
-			const std::string* type;
-			const std::string* equil;
-			const std::string* synamp;
-			const std::string* decay;
-			const std::string* relfacil;
-			const std::string* facildecay;
-			const std::string* voltdep;
-			const std::string* maxrelcond;
-			const std::string* satpspot;
-			const std::string* threshpspot;
-			const std::string* hebbian;
-			const std::string* maxaugcond;
-			const std::string* learninginc;
-			const std::string* learningtime;
-			const std::string* allowforget;
-			const std::string* forgettime;
-			const std::string* consolidation;
+			std::string name;
+			std::string id;
+			std::string type;
+			std::string equil;
+			std::string synamp;
+			std::string decay;
+			std::string relfacil;
+			std::string facildecay;
+			std::string voltdep;
+			std::string maxrelcond;
+			std::string satpspot;
+			std::string threshpspot;
+			std::string hebbian;
+			std::string maxaugcond;
+			std::string learninginc;
+			std::string learningtime;
+			std::string allowforget;
+			std::string forgettime;
+			std::string consolidation;
 		} SynapsesSpiking;
 
 		typedef struct {
-			const std::string* name;
-			const std::string* id;
-			const std::string* type;
-			const std::string* lowcoup;
-			const std::string* hicoup;
-			const std::string* turnonv;
-			const std::string* saturatev;
+			std::string name;
+			std::string id;
+			std::string type;
+			std::string lowcoup;
+			std::string hicoup;
+			std::string turnonv;
+			std::string saturatev;
 		} SynapsesElectrical;
 
 		typedef struct {
-			const std::string* id;
-			const std::string* sourceid;
-			const std::string* targetid;
-			const std::string* type;
-			const std::string* synapsetypeid;
-			const std::string* delay;
-			const std::string* g;
+			std::string id;
+			std::string sourceid;
+			std::string targetid;
+			std::string type;
+			std::string synapsetypeid;
+			std::string delay;
+			std::string g;
 		} Connexions;
 
 		// Structure to contain the organisms data as vector structs
-		typedef struct {
-			const std::string* 	organism_id;
-			const std::string* 	organism_name;
-			const std::string* 	neuralmodule_id;
-			const std::string* 	neuralmodule_name;
+		//typedef struct {
+		struct Organisms {
+			std::string 	organism_id;
+			std::string 	organism_name;
+			std::string 	neuralmodule_id;
+			std::string 	neuralmodule_name;
 			// Generate the vector structs for each section of the model
 		/*	std::vector<std::shared_ptr<Neurons>>               neuronVector;
 			std::vector<std::shared_ptr<Connexions>>            connexionVector;
@@ -104,7 +105,10 @@ class NeuralModel {
 			std::vector<SynapsesSpiking>       spikingVector;
 			std::vector<SynapsesElectrical>    electricalVector;
 			std::vector<SynapsesNonSpiking>    nonspikingVector;
-		} Organisms;
+		};
+
+		// Instantiate and generate the organism vector struct
+		std::vector<Organisms>	organismVector;
 
 		// Variable member of class to hold the path to the Animatlab Neural Model Configuration
 		std::string configFilePath;
@@ -116,6 +120,12 @@ class NeuralModel {
 		// Access the main function that will parse and get datat from config file
 		int parse_config_file();
 		void get_config_file_path(void);
+		
 		void print_val(std::string, const std::string&);
-		//void printVect(std::vector<std::string>const& vect);
+
+		// Transfering the configuration model data from the Host(CPU) to the Device(GPU) cache
+		void transferOrganism(void);
+		void transferNeurons(struct Organisms*);
+		void transferNonSpikingSynapses(struct Organisms*);
+		void transferConnexions(struct Organisms*);
 };

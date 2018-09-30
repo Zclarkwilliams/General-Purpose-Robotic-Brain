@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o"
+  "CMakeFiles/agile_robotics_controller.dir/code/include/device_control.cpp.o"
   "CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o"
   "CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o"
   "agile_robotics_controller.pdb"

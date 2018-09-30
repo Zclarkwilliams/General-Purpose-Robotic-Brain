@@ -20,6 +20,8 @@ pugixml.hpp
 model_config_data.hpp
 /home/nvidia/dev/agile_robotics_contoller/code/include/model_config_data.hpp
 
+/home/nvidia/dev/agile_robotics_contoller/code/include/device_control.cpp
+
 /home/nvidia/dev/agile_robotics_contoller/code/include/model_config_data.hpp
 vector
 -
@@ -85,6 +87,8 @@ fstream
 -
 iostream
 -
+pugixml.hpp
+/home/nvidia/dev/agile_robotics_contoller/code/src/pugixml.hpp
 model_config_data.hpp
 /home/nvidia/dev/agile_robotics_contoller/code/src/model_config_data.hpp
 system_defines.hpp
@@ -96,6 +100,22 @@ vector
 memory
 -
 sstream
+-
+
+code/include/pugiconfig.hpp
+
+code/include/pugixml.hpp
+pugiconfig.hpp
+code/include/pugiconfig.hpp
+stddef.h
+-
+exception
+-
+iterator
+-
+iosfwd
+-
+string
 -
 
 code/include/system_defines.hpp
