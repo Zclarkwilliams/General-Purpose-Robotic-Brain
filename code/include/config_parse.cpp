@@ -6,6 +6,7 @@
 
 //	Non-Standard libraries
 #include "pugixml.hpp"
+#include "cuda.h"
 
 //	Custom made header files
 //#include "error_handler.hpp"
@@ -489,8 +490,35 @@ void NeuralModel::print_val(std::string tag, const std::string& value) {
 
 void NeuralModel::transferOrganism() {
 	for (int i = 0, size = organismVector.size(); i < size; i++) {
+		if (i >= 1) {
+			std::cout << "Warning more than 1 organism found in file. Only organism at reference 0 will be generated" << std::endl;
+			return;
+		}
 		// Generate a pointer to the organism we will be generating in the device
 		Organisms *org_ptr = &organismVector[i];
+
+		/*
+		Allocate Device Memory:
+			cudaMalloc(&devptr,size)
+		Free Device Memory:
+			cudaFree(devptr)
+		Transfer Memory:
+			cudaMemcpy(dst,src,size,cudaMemcpyKindkind)
+				**kind ={cudaMemcpyHostToDevice, . . .}
+		*/
+
+		// We will get the size of the organism vector to allocate memory of that suze
+		int memsize = sizeof(&org_ptr);//->neuronVector);
+
+		// NOT SURE WHY WE NEED THIS
+		// TODO: What was the point of this? Maybe this was to generate the pointer to the host memory...
+		std::vector<NeuralModel::Organisms> *orgvect;// = &NeuralModel::organismVector;
+
+		// Allocate the device memory for the organism
+		cudaMalloc(&orgvect, memsize);
+
+		// Copy the organism from the host memory to the device memory
+		cudaMemcpy(&orgvect, &NeuralModel::organismVector, memsize, cudaMemcpyHostToDevice);
 
 		// Organism specific data aquisition and transfer
 		std::string temp_org_id		= org_ptr->organism_id;
@@ -512,12 +540,27 @@ void NeuralModel::transferOrganism() {
 
 void NeuralModel::transferNeurons(Organisms *org_ptr) {
 
-	/*
-	int memsize = sizeof(org_ptr->neuronVector);
+	/* NOT SURE IF THIS IS NEEDED AS WE"VE COPIED THE CONTAINING VECOTR ORGANISM INTO CUDA MEMORY ALREADY
+	Allocate Device Memory:
+		cudaMalloc(&devptr,size)
+	Free Device Memory:
+		cudaFree(devptr)
+	Transfer Memory:
+		cudaMemcpy(dst,src,size,cudaMemcpyKindkind)
+			**kind ={cudaMemcpyHostToDevice, . . .}
 
-	std::vector<NeuralModel::Neurons> *neuronvect = org_ptr->neuronVector;
+	// We will get the size of the organism vector to allocate memory of that suze
+	int memsize = sizeof(&org_ptr);//->neuronVector);
 
-	cudaMemAlloc(neuronvect, org->neuronVect, memsize, cudaMemHostToDevice);
+	// NOT SURE WHY WE NEED THIS 
+	// TODO: What was the point of this? Maybe this was to generate the pointer to the host memory...
+	std::vector<NeuralModel::Organism> *orgvect;// = &NeuralModel::organismVector;
+
+	// Allocate the device memory for the organism
+	cudaMalloc(&org_ptr, memsize);
+
+	// Copy the organism from the host memory to the device memory
+	cudaMemcpy(&orgvect, &NeuralModel::organismVector, memsize, cudaMemcpyHostToDevice);
 
 	*/
 
