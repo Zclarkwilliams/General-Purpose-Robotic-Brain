@@ -6,5 +6,5 @@ CXX_FLAGS =  -Wall -Werror -std=c++17 -g
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/nvidia/dev/agile_robotics_contoller/agile_robotics_controller -I/home/nvidia/dev/agile_robotics_contoller/code/include 
+CXX_INCLUDES = -I/home/nvidia/dev/agile_robotics_contoller/agile_robotics_controller -I/home/nvidia/dev/agile_robotics_contoller/code/include -I/usr/local/cuda-9.0/include 
 

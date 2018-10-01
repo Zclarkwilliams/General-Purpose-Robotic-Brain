@@ -9,9 +9,11 @@
 //#inculde "error_handler.h
 #include "pugixml.hpp"
 
+
 //	Custom made header files
 #include "model_config_data.hpp"
 #include "system_defines.hpp"
+#include "device_control.cpp"
 
 void generate_model(std::shared_ptr<NeuralModel> neuralModel) {
 	// Transfer model configuration into the GPU cache

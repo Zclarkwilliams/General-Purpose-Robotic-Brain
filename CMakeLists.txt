@@ -21,18 +21,19 @@ set (PROJ_DIR "${PROJECT_SOURCE_DIR}")
 # Set up the path to source main.cpp
 set (SOURCE_DIR ${PROJECT_SOURCE_DIR}/code/src)
 set (includes_dir ${PROJECT_SOURCE_DIR}/code/include)
+set (include_cuda_dir "/usr/local/cuda-9.0/include")
 
 #add_executable (agile_robotics_controller "${source_files}")
 
 # Set up the path to include files and libraries
-
-
 include_directories(agile_robotics_controller ${includes_dir})
+include_directories(agile_robotics_controller ${include_cuda_dir})
 
 file (GLOB source_files ${SOURCE_DIR}/*.cpp)
 file (GLOB include_files ${includes_dir}/*.hpp ${includes_dir}/*.cpp)
+file (GLOB include_cuda_files ${include_cuda_dir}/*.hpp ${include_cuda_dir}/*.cpp)
 
-add_executable(agile_robotics_controller ${source_files} ${include_files})
+add_executable(agile_robotics_controller ${source_files} ${include_files} ${include_cuda_files})
 
 # Enable all the flags and set the c++ standard
 set (CMAKE_CXX_FLAGS "${CMAK_CXX_FLAGS} -Wall -Werror -std=c++17")

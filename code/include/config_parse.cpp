@@ -4,13 +4,33 @@
 #include <fstream>
 #include <iostream>
 
+#include <cuda.h>
+#include <cuda_runtime_api.h>
+
 //	Non-Standard libraries
 #include "pugixml.hpp"
-#include "cuda.h"
 
 //	Custom made header files
 //#include "error_handler.hpp"
 #include "model_config_data.hpp"
+
+/*
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+//\\//\\//\\//\\//\\//\\//PROTOTYPING AREA//\\//\\//\\//\\//\\//\\//\\//\\//\\//
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+*/
+
+__global__ void getOrganismData(struct organism* org_ptr) {
+	
+
+
+}
+
+/*
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+//\\//\\//\\//\\//\\//\\//PROTOTYPING AREA//\\//\\//\\//\\//\\//\\//\\//\\//\\//
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+*/
 
 int NeuralModel::parse_config_file() {
 	/*****************************************************************\
@@ -515,10 +535,12 @@ void NeuralModel::transferOrganism() {
 		std::vector<NeuralModel::Organisms> *orgvect;// = &NeuralModel::organismVector;
 
 		// Allocate the device memory for the organism
-		cudaMalloc(&orgvect, memsize);
+		cudaMalloc((void **) &orgvect, memsize);
 
 		// Copy the organism from the host memory to the device memory
-		cudaMemcpy(&orgvect, &NeuralModel::organismVector, memsize, cudaMemcpyHostToDevice);
+		cudaMemcpy(&orgvect, (const void*) &organismVector, memsize, cudaMemcpyHostToDevice);
+
+		//getOrganismData <<1,1>> (org_ptr);
 
 		// Organism specific data aquisition and transfer
 		std::string temp_org_id		= org_ptr->organism_id;
