@@ -25,16 +25,19 @@ void getOrganismData(std::vector<NeuralModel::Organisms>* org_ptr) {
 	
 	/*
 	 *	Neural Equations 
-	 * 		1. 
-	 * 		2. 
-	 *		3. 
-	 * 		4. 
+	 * 		1. C_m(dV/dt)	= I_leak + I_sym + I_app
+	 * 		2. I_leak 	= G_m * (E_r - V)
+	 *		3. I_sym 	= SUM_i=1->n(G_s,i * (E_s,i - V))
+	 *				  { 0,						if V_pre < E_lo
+	 * 		4. G_s,i	= { g_s,i * (V_pre - E_lo)/(E_hi - E_lo),	if E_lo < V_pre < E_hi
+	 *				  { g_s,i,					if V_pre > E_hi
+	 *
 	 * 	**~20% of neurons will use these equations
-	 * 		5. I_NaP = G_Na * m_infinity(V) * h * (E_Na - V)
-	 * 		6. h_dot = (h_inifinity - h) / tao_h(V)
-	 * 		7. z_infinity = 1 / (1 + A_z * exp(S_z * (V - E_z)))
-	 * 		8. tao_h(V) = tao_h_,_max * h_infinity(V) * sqrt(A_h * exp(S_z * (V - E_z))
-	 * 		9. G_s,i = g_i * min(max((V_pre-E_lo,i)/(E_hi,i - E_lo,i),0),1)
+	 * 		5. I_NaP	= G_Na * m_infinity(V) * h * (E_Na - V)
+	 * 		6. h_dot 	= (h_inifinity - h) / tao_h(V)
+	 * 		7. z_infinity 	= 1 / (1 + A_z * exp(S_z * (V - E_z)))
+	 * 		8. tao_h(V) 	= tao_h_,_max * h_infinity(V) * sqrt(A_h * exp(S_z * (V - E_z))
+	 * 		9. G_s,i 	= g_i * min(max((V_pre-E_lo,i)/(E_hi,i - E_lo,i),0),1)
 	 */
 
 }
