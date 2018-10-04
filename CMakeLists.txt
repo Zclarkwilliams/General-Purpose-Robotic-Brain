@@ -29,9 +29,9 @@ set (include_cuda_dir "/usr/local/cuda-9.0/include")
 include_directories(agile_robotics_controller ${includes_dir})
 include_directories(agile_robotics_controller ${include_cuda_dir})
 
-file (GLOB source_files ${SOURCE_DIR}/*.cpp)
-file (GLOB include_files ${includes_dir}/*.hpp ${includes_dir}/*.cpp)
-file (GLOB include_cuda_files ${include_cuda_dir}/*.hpp ${include_cuda_dir}/*.cpp)
+file (GLOB source_files ${SOURCE_DIR}/*.cu)
+file (GLOB include_files ${includes_dir}/*.hpp ${includes_dir}/*.cpp ${includes_dir}/*.cu)
+file (GLOB include_cuda_files ${include_cuda_dir}/*.hpp ${include_cuda_dir}/*.cpp ${include_cuda_dir}/*.cu)
 
 add_executable(agile_robotics_controller ${source_files} ${include_files} ${include_cuda_files})
 
