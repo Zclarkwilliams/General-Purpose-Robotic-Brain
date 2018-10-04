@@ -28,9 +28,18 @@ void getOrganismData(std::vector<NeuralModel::Organisms>* org_ptr) {
 	 * 		1. C_m(dV/dt)	= I_leak + I_sym + I_app
 	 * 		2. I_leak 	= G_m * (E_r - V)
 	 *		3. I_sym 	= SUM_i=1->n(G_s,i * (E_s,i - V))
-	 *				  { 0,						if V_pre < E_lo
-	 * 		4. G_s,i	= { g_s,i * (V_pre - E_lo)/(E_hi - E_lo),	if E_lo < V_pre < E_hi
-	 *				  { g_s,i,					if V_pre > E_hi
+	 *				  { 0,					   if V_pre < E_lo
+	 * 		4. G_s,i	= { g_s,i * (V_pre - E_lo)/(E_hi - E_lo),  if E_lo < V_pre < E_hi
+	 *				  { g_s,i,				   if V_pre > E_hi
+	 *
+	 *		  G_s,i	^
+	 *			|	  |-R-|    
+	 *		 g_s,i -|            /------>
+	 *			|	    / 
+	 *			|          /
+	 *		     0 -| --------/
+	 *			----------|---|-------> V_pre
+	 *				E_lo  E_hi
 	 *
 	 * 	**~20% of neurons will use these equations
 	 * 		5. I_NaP	= G_Na * m_infinity(V) * h * (E_Na - V)
