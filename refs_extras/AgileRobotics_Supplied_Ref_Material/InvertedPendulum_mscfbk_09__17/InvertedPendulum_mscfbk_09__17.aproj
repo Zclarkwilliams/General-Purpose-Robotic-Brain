@@ -6,7 +6,7 @@
 <Physics>Bullet</Physics>
 <LibraryVersion>Double</LibraryVersion>
 <Simulation>
-<ProjectPath>C:\Users\Wade Hilts\Google Drive\AnimatLab\InvertedPendulum_mscfbk_09__17\</ProjectPath>
+<ProjectPath>C:\Users\Zachary\Documents\A_School\URMP\refs_extras\AgileRobotics_Supplied_Ref_Material\InvertedPendulum_mscfbk_09__17\</ProjectPath>
 <AnimatModule>BulletAnimatSim_VC10_double.dll</AnimatModule>
 <UpdateDataInterval>250</UpdateDataInterval>
 <StartPaused>False</StartPaused>
@@ -354,7 +354,7 @@
 <Relaxation5>
 <AssemblyFile>AnimatGUI.dll</AssemblyFile>
 <ClassName>AnimatGUI.DataObjects.Physical.ConstraintRelaxationBullet</ClassName>
-<ID>119a38cb-edc7-4f94-8346-b8694a6fc3aa</ID>
+<ID>0be78ed6-54b3-48ab-9e38-08fa84ab9145</ID>
 <Enabled>False</Enabled>
 <CoordinateID>4</CoordinateID>
 <Stiffness Value="100" Scale="Kilo" Actual="100000"/>
@@ -363,7 +363,7 @@
 <Relaxation6>
 <AssemblyFile>AnimatGUI.dll</AssemblyFile>
 <ClassName>AnimatGUI.DataObjects.Physical.ConstraintRelaxationBullet</ClassName>
-<ID>0be78ed6-54b3-48ab-9e38-08fa84ab9145</ID>
+<ID>3809ee92-dba6-40bb-b9ae-f240c9eaff48</ID>
 <Enabled>False</Enabled>
 <CoordinateID>5</CoordinateID>
 <Stiffness Value="100" Scale="Kilo" Actual="100000"/>
@@ -7297,8 +7297,8 @@
 </Stimuli>
 <HudItems>
 <HudItem>
-<Name>96556b8c-fa0a-4b3c-92e9-cefaba1b1378</Name>
-<ID>96556b8c-fa0a-4b3c-92e9-cefaba1b1378</ID>
+<Name>40007d40-123e-47fd-b97f-d112dfdb592c</Name>
+<ID>40007d40-123e-47fd-b97f-d112dfdb592c</ID>
 <Type>HudText</Type>
 <CharSize>30</CharSize>
 <Text>Time: %3.3f</Text>
@@ -7392,7 +7392,7 @@
 <DockingConfig>&lt;?xml version="1.0" encoding="us-ascii"?&gt;
 &lt;!-- DotNetMagic, The User Interface library for .NET (www.crownwood.net) --&gt;
 &lt;!-- Modifying this generated file will probably render it invalid --&gt;
-&lt;DockingConfig FormatVersion="10" InsideFill="False" InnerMinimum="20, 20" SavedAt="09/08/2017 15:22:13"&gt;
+&lt;DockingConfig FormatVersion="10" InsideFill="False" InnerMinimum="20, 20" SavedAt="10/06/2018 14:56:31"&gt;
   &lt;Content Name="Errors" Visible="True" Docked="True" AutoHidden="False" CaptionBar="True" CloseButton="False" DisplaySize="150, 125" DisplayLocation="150, 150" AutoHideSize="150, 125" FloatingSize="150, 150" FullTitle="Errors" Office2003BackColor="Base" UniqueName="" Office2007BackColor="Base" MediaPlayerBackColor="Base"&gt;
     &lt;DefaultRestore Type="Crownwood.DotNetMagic.Docking.RestoreContentState"&gt;
       &lt;Content Name="Errors" UniqueName="" /&gt;
@@ -7493,7 +7493,7 @@
       &lt;Child Type="null" /&gt;
     &lt;/FloatingRestore&gt;
   &lt;/Content&gt;
-  &lt;Content Name="Workspace" Visible="True" Docked="True" AutoHidden="False" CaptionBar="True" CloseButton="False" DisplaySize="421, 150" DisplayLocation="150, 150" AutoHideSize="200, 150" FloatingSize="150, 150" FullTitle="Workspace" Office2003BackColor="Base" UniqueName="" Office2007BackColor="Base" MediaPlayerBackColor="Base"&gt;
+  &lt;Content Name="Workspace" Visible="True" Docked="True" AutoHidden="False" CaptionBar="True" CloseButton="False" DisplaySize="636, 150" DisplayLocation="150, 150" AutoHideSize="200, 150" FloatingSize="150, 150" FullTitle="Workspace" Office2003BackColor="Base" UniqueName="" Office2007BackColor="Base" MediaPlayerBackColor="Base"&gt;
     &lt;DefaultRestore Type="Crownwood.DotNetMagic.Docking.RestoreContentState"&gt;
       &lt;Content Name="Workspace" UniqueName="" /&gt;
       &lt;State Value="DockLeft" /&gt;
@@ -7507,7 +7507,7 @@
     &lt;DockingRestore Type="Crownwood.DotNetMagic.Docking.RestoreContentDockingAffinity"&gt;
       &lt;Content Name="Workspace" UniqueName="" /&gt;
       &lt;State Value="DockLeft" /&gt;
-      &lt;Position Size="421, 150" Location="150, 150" /&gt;
+      &lt;Position Size="636, 150" Location="150, 150" /&gt;
       &lt;Best Count="2"&gt;
         &lt;Item Name="Workspace" /&gt;
         &lt;Item Name="Properties" /&gt;
@@ -7518,7 +7518,7 @@
       &lt;PreviousAll Count="0" /&gt;
       &lt;Child Type="Crownwood.DotNetMagic.Docking.RestoreZoneAffinity"&gt;
         &lt;Content Name="Workspace" UniqueName="" /&gt;
-        &lt;Space Value="50" /&gt;
+        &lt;Space Value="32.426550598476605005440696410" /&gt;
         &lt;Best Count="1"&gt;
           &lt;Item Name="Workspace" /&gt;
         &lt;/Best&gt;
@@ -7541,7 +7541,7 @@
       &lt;Child Type="null" /&gt;
     &lt;/FloatingRestore&gt;
   &lt;/Content&gt;
-  &lt;Content Name="Properties" Visible="True" Docked="True" AutoHidden="False" CaptionBar="True" CloseButton="False" DisplaySize="421, 150" DisplayLocation="150, 150" AutoHideSize="200, 150" FloatingSize="150, 150" FullTitle="Properties" Office2003BackColor="Base" UniqueName="" Office2007BackColor="Base" MediaPlayerBackColor="Base"&gt;
+  &lt;Content Name="Properties" Visible="True" Docked="True" AutoHidden="False" CaptionBar="True" CloseButton="False" DisplaySize="636, 150" DisplayLocation="150, 150" AutoHideSize="200, 150" FloatingSize="150, 150" FullTitle="Properties" Office2003BackColor="Base" UniqueName="" Office2007BackColor="Base" MediaPlayerBackColor="Base"&gt;
     &lt;DefaultRestore Type="Crownwood.DotNetMagic.Docking.RestoreContentState"&gt;
       &lt;Content Name="Properties" UniqueName="" /&gt;
       &lt;State Value="DockLeft" /&gt;
@@ -7555,7 +7555,7 @@
     &lt;DockingRestore Type="Crownwood.DotNetMagic.Docking.RestoreContentDockingAffinity"&gt;
       &lt;Content Name="Properties" UniqueName="" /&gt;
       &lt;State Value="DockLeft" /&gt;
-      &lt;Position Size="421, 150" Location="150, 150" /&gt;
+      &lt;Position Size="636, 150" Location="150, 150" /&gt;
       &lt;Best Count="1"&gt;
         &lt;Item Name="Properties" /&gt;
       &lt;/Best&gt;
@@ -7565,7 +7565,7 @@
       &lt;PreviousAll Count="0" /&gt;
       &lt;Child Type="Crownwood.DotNetMagic.Docking.RestoreZoneAffinity"&gt;
         &lt;Content Name="Properties" UniqueName="" /&gt;
-        &lt;Space Value="100" /&gt;
+        &lt;Space Value="100.000" /&gt;
         &lt;Best Count="1"&gt;
           &lt;Item Name="Properties" /&gt;
         &lt;/Best&gt;
@@ -7825,7 +7825,7 @@
   &lt;CustomGlobalData /&gt;
   &lt;Sequence Count="1" Unique="0" Space="100" Direction="Horizontal"&gt;
     &lt;Leaf Count="4" Unique="5" Space="100"&gt;
-      &lt;Page Title="Neural Subsystem" ImageList="True" ImageIndex="0" Selected="False" Control="null" UniqueName=""&gt;
+      &lt;Page Title="Neural Subsystem" ImageList="True" ImageIndex="0" Selected="True" Control="null" UniqueName=""&gt;
         &lt;CustomPageData&gt;&lt;![CDATA[&lt;TabPage&gt;
 &lt;Form&gt;
 &lt;ID&gt;adb451db-7587-44d6-9c5a-1277f890c233&lt;/ID&gt;
@@ -7839,7 +7839,7 @@
 &lt;/TabPage&gt;
 ]]&gt;&lt;/CustomPageData&gt;
       &lt;/Page&gt;
-      &lt;Page Title="LineChart" ImageList="True" ImageIndex="1" Selected="True" Control="null" UniqueName=""&gt;
+      &lt;Page Title="LineChart" ImageList="True" ImageIndex="1" Selected="False" Control="null" UniqueName=""&gt;
         &lt;CustomPageData&gt;&lt;![CDATA[&lt;TabPage&gt;
 &lt;Form&gt;
 &lt;ID&gt;6153e882-a3e2-489a-9b91-873b35dbd353&lt;/ID&gt;
