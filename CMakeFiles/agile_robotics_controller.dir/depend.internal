@@ -17,16 +17,41 @@ CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o
  /usr/local/cuda-9.0/include/surface_types.h
  /usr/local/cuda-9.0/include/texture_types.h
  /usr/local/cuda-9.0/include/vector_types.h
-CMakeFiles/agile_robotics_controller.dir/code/include/device_control.cpp.o
- /home/nvidia/dev/agile_robotics_contoller/code/include/device_control.cpp
+CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o
+ /home/nvidia/dev/agile_robotics_contoller/code/include/config_parse2.cpp
+ /home/nvidia/dev/agile_robotics_contoller/code/include/model_config_data.hpp
+ /home/nvidia/dev/agile_robotics_contoller/code/include/pugiconfig.hpp
+ /home/nvidia/dev/agile_robotics_contoller/code/include/pugixml.hpp
+ /usr/local/cuda-9.0/include/builtin_types.h
+ /usr/local/cuda-9.0/include/crt/host_defines.h
+ /usr/local/cuda-9.0/include/cuda.h
+ /usr/local/cuda-9.0/include/cuda_device_runtime_api.h
+ /usr/local/cuda-9.0/include/cuda_runtime_api.h
+ /usr/local/cuda-9.0/include/device_types.h
+ /usr/local/cuda-9.0/include/driver_types.h
+ /usr/local/cuda-9.0/include/host_defines.h
+ /usr/local/cuda-9.0/include/surface_types.h
+ /usr/local/cuda-9.0/include/texture_types.h
+ /usr/local/cuda-9.0/include/vector_types.h
+CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o
+ /home/nvidia/dev/agile_robotics_contoller/code/include/device_control.cu
+ /home/nvidia/dev/agile_robotics_contoller/code/include/main.cpp
+ /home/nvidia/dev/agile_robotics_contoller/code/include/model_config_data.hpp
+ /home/nvidia/dev/agile_robotics_contoller/code/include/pugiconfig.hpp
+ /home/nvidia/dev/agile_robotics_contoller/code/include/pugixml.hpp
+ /home/nvidia/dev/agile_robotics_contoller/code/include/system_defines.hpp
+ /usr/local/cuda-9.0/include/builtin_types.h
+ /usr/local/cuda-9.0/include/crt/host_defines.h
+ /usr/local/cuda-9.0/include/cuda.h
+ /usr/local/cuda-9.0/include/cuda_device_runtime_api.h
+ /usr/local/cuda-9.0/include/cuda_runtime_api.h
+ /usr/local/cuda-9.0/include/device_types.h
+ /usr/local/cuda-9.0/include/driver_types.h
+ /usr/local/cuda-9.0/include/host_defines.h
+ /usr/local/cuda-9.0/include/surface_types.h
+ /usr/local/cuda-9.0/include/texture_types.h
+ /usr/local/cuda-9.0/include/vector_types.h
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o
  /home/nvidia/dev/agile_robotics_contoller/code/include/pugiconfig.hpp
  /home/nvidia/dev/agile_robotics_contoller/code/include/pugixml.cpp
  /home/nvidia/dev/agile_robotics_contoller/code/include/pugixml.hpp
-CMakeFiles/agile_robotics_controller.dir/code/src/main.cpp.o
- /home/nvidia/dev/agile_robotics_contoller/code/src/main.cpp
- code/include/device_control.cpp
- code/include/model_config_data.hpp
- code/include/pugiconfig.hpp
- code/include/pugixml.hpp
- code/include/system_defines.hpp

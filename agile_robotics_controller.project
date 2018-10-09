@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <CodeLite_Project Name="agile_robotics_controller" InternalType="">
   <VirtualDirectory Name="src">
-    <File Name="code/include/device_control.cpp"/>
+    <File Name="code/include/config_parse.cpp"/>
+    <File Name="code/include/config_parse2.cpp"/>
+    <File Name="code/include/main.cpp"/>
     <File Name="code/include/pugixml.cpp"/>
   </VirtualDirectory>
   <VirtualDirectory Name="include">
-    <File Name="code/include/config_parse.cu"/>
+    <File Name="code/include/device_control.cu"/>
     <File Name="code/include/error_handler.hpp"/>
     <File Name="code/include/model_config_data.hpp"/>
     <File Name="code/include/pugiconfig.hpp"/>
     <File Name="code/include/pugixml.hpp"/>
     <File Name="code/include/system_defines.hpp"/>
-    <File Name="code/src/main.cu"/>
     <File Name="../../../../usr/local/cuda-9.0/include/cuda_fp16.hpp"/>
     <File Name="../../../../usr/local/cuda-9.0/include/device_atomic_functions.hpp"/>
     <File Name="../../../../usr/local/cuda-9.0/include/device_double_functions.hpp"/>

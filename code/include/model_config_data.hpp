@@ -124,8 +124,8 @@ class NeuralModel {
 		void print_val(std::string, const std::string&);
 
 		// Transfering the configuration model data from the Host(CPU) to the Device(GPU) cache
-		void transferOrganism(void);
-		void transferNeurons(struct Organisms*);
-		void transferNonSpikingSynapses(struct Organisms*);
-		void transferConnexions(struct Organisms*);
+		//void transferOrganism(void);
+		//void transferNeurons(struct Organisms*);
+		//void transferNonSpikingSynapses(struct Organisms*);
+		//void transferConnexions(struct Organisms*);
 };
