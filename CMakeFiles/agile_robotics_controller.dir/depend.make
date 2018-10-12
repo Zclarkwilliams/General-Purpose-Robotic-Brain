@@ -17,22 +17,6 @@ CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o: /usr/l
 CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o: /usr/local/cuda-9.0/include/texture_types.h
 CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o: /usr/local/cuda-9.0/include/vector_types.h
 
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: code/include/config_parse2.cpp
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: code/include/model_config_data.hpp
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: code/include/pugiconfig.hpp
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: code/include/pugixml.hpp
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/builtin_types.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/crt/host_defines.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/cuda.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/cuda_device_runtime_api.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/cuda_runtime_api.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/device_types.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/driver_types.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/host_defines.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/surface_types.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/texture_types.h
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: /usr/local/cuda-9.0/include/vector_types.h
-
 CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o: code/include/device_control.cu
 CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o: code/include/main.cpp
 CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o: code/include/model_config_data.hpp

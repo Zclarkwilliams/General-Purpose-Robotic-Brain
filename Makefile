@@ -150,33 +150,6 @@ code/include/config_parse.cpp.s:
 	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.s
 .PHONY : code/include/config_parse.cpp.s
 
-code/include/config_parse2.o: code/include/config_parse2.cpp.o
-
-.PHONY : code/include/config_parse2.o
-
-# target to build an object file
-code/include/config_parse2.cpp.o:
-	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o
-.PHONY : code/include/config_parse2.cpp.o
-
-code/include/config_parse2.i: code/include/config_parse2.cpp.i
-
-.PHONY : code/include/config_parse2.i
-
-# target to preprocess a source file
-code/include/config_parse2.cpp.i:
-	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.i
-.PHONY : code/include/config_parse2.cpp.i
-
-code/include/config_parse2.s: code/include/config_parse2.cpp.s
-
-.PHONY : code/include/config_parse2.s
-
-# target to generate assembly for a file
-code/include/config_parse2.cpp.s:
-	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.s
-.PHONY : code/include/config_parse2.cpp.s
-
 code/include/main.o: code/include/main.cpp.o
 
 .PHONY : code/include/main.o
@@ -243,9 +216,6 @@ help:
 	@echo "... code/include/config_parse.o"
 	@echo "... code/include/config_parse.i"
 	@echo "... code/include/config_parse.s"
-	@echo "... code/include/config_parse2.o"
-	@echo "... code/include/config_parse2.i"
-	@echo "... code/include/config_parse2.s"
 	@echo "... code/include/main.o"
 	@echo "... code/include/main.i"
 	@echo "... code/include/main.s"

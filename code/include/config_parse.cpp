@@ -29,7 +29,8 @@ void getOrganismData(NeuralModel::Organisms* org_ptr) {
 	 * 		2. I_leak 		= G_m * (E_r - V)
 	 *		3. I_sym 		= SUM_i=1->n(G_s,i * (E_s,i - V))
 	 *						  { 0,					   				  if V_pre < E_lo
-	 * 		4. G_s,i		= { g_s,i * (V_pre - E_lo)/(E_hi - E_lo), if E_lo < V_pre < E_hi
+	 * 		4. G_s,i		= { g_s,i * (V_pre - E_lo)
+	 * /(E_hi - E_lo), if E_lo < V_pre < E_hi
 	 *				  		  { g_s,i,				   				  if V_pre > E_hi
 	 *
 	 *				  G_s,i	^
@@ -158,6 +159,10 @@ int NeuralModel::parse_config_file() {
 		|		Neuron Section -
 		|
 		\**********************************************************************************************************************************************************/
+		
+		// Get the Sodium channel potential E_Na
+		neuron_E_Na	=	(std::string)neuralModule->child("CaEquilPot").text().get();
+		
 		//	Set a list to be generated on the neuron identified by the "Neurons.Neuron" name in the xml config file
 		pugi::xml_object_range<pugi::xml_node_iterator> neuronlist = neuralModule.child("Neurons").children();
 

@@ -8,7 +8,7 @@
 class NeuralModel {
     public:
         typedef struct {
-            std::string name;
+			std::string name;
 			std::string id;
             std::string enabled;
             std::string tonicstimulus;
@@ -34,6 +34,7 @@ class NeuralModel {
 			std::string cadeactive_timeconst;
 			std::string cadeactive_activatetype;
 		} Neurons;
+		std::string neuron_E_Na; // This is a neuronal global setting
 
 		typedef struct {
 			std::string name;
@@ -124,8 +125,8 @@ class NeuralModel {
 		void print_val(std::string, const std::string&);
 
 		// Transfering the configuration model data from the Host(CPU) to the Device(GPU) cache
-		//void transferOrganism(void);
-		//void transferNeurons(struct Organisms*);
-		//void transferNonSpikingSynapses(struct Organisms*);
-		//void transferConnexions(struct Organisms*);
+		void transferOrganism(void);
+		void transferNeurons(struct Organisms*);
+		void transferNonSpikingSynapses(struct Organisms*);
+		void transferConnexions(struct Organisms*);
 };

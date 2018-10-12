@@ -24,24 +24,6 @@ pugixml.hpp
 model_config_data.hpp
 /home/nvidia/dev/agile_robotics_contoller/code/include/model_config_data.hpp
 
-/home/nvidia/dev/agile_robotics_contoller/code/include/config_parse2.cpp
-vector
--
-sstream
--
-fstream
--
-iostream
--
-cuda.h
--
-cuda_runtime_api.h
--
-pugixml.hpp
-/home/nvidia/dev/agile_robotics_contoller/code/include/pugixml.hpp
-model_config_data.hpp
-/home/nvidia/dev/agile_robotics_contoller/code/include/model_config_data.hpp
-
 /home/nvidia/dev/agile_robotics_contoller/code/include/device_control.cu
 cuda.h
 -

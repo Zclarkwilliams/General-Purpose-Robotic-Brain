@@ -81,33 +81,9 @@ CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o.provide
 CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o.provides.build: CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o
 
 
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: CMakeFiles/agile_robotics_controller.dir/flags.make
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o: code/include/config_parse2.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nvidia/dev/agile_robotics_contoller/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o"
-	/usr/local/cuda-9.0/bin/nvcc   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o -c /home/nvidia/dev/agile_robotics_contoller/code/include/config_parse2.cpp
-
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.i"
-	/usr/local/cuda-9.0/bin/nvcc  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nvidia/dev/agile_robotics_contoller/code/include/config_parse2.cpp > CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.i
-
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.s"
-	/usr/local/cuda-9.0/bin/nvcc  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nvidia/dev/agile_robotics_contoller/code/include/config_parse2.cpp -o CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.s
-
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.requires:
-
-.PHONY : CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.requires
-
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.provides: CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.requires
-	$(MAKE) -f CMakeFiles/agile_robotics_controller.dir/build.make CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.provides.build
-.PHONY : CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.provides
-
-CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.provides.build: CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o
-
-
 CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o: CMakeFiles/agile_robotics_controller.dir/flags.make
 CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o: code/include/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nvidia/dev/agile_robotics_contoller/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nvidia/dev/agile_robotics_contoller/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o"
 	/usr/local/cuda-9.0/bin/nvcc   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o -c /home/nvidia/dev/agile_robotics_contoller/code/include/main.cpp
 
 CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.i: cmake_force
@@ -131,7 +107,7 @@ CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o.provides.build:
 
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o: CMakeFiles/agile_robotics_controller.dir/flags.make
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o: code/include/pugixml.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nvidia/dev/agile_robotics_contoller/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/nvidia/dev/agile_robotics_contoller/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o"
 	/usr/local/cuda-9.0/bin/nvcc   $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o -c /home/nvidia/dev/agile_robotics_contoller/code/include/pugixml.cpp
 
 CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.i: cmake_force
@@ -156,7 +132,6 @@ CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o.provides.bui
 # Object files for target agile_robotics_controller
 agile_robotics_controller_OBJECTS = \
 "CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o" \
-"CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o" \
 "CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o" \
 "CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o"
 
@@ -164,12 +139,11 @@ agile_robotics_controller_OBJECTS = \
 agile_robotics_controller_EXTERNAL_OBJECTS =
 
 agile_robotics_controller: CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o
-agile_robotics_controller: CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o
 agile_robotics_controller: CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o
 agile_robotics_controller: CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o
 agile_robotics_controller: CMakeFiles/agile_robotics_controller.dir/build.make
 agile_robotics_controller: CMakeFiles/agile_robotics_controller.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nvidia/dev/agile_robotics_contoller/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking CXX executable agile_robotics_controller"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/nvidia/dev/agile_robotics_contoller/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable agile_robotics_controller"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/agile_robotics_controller.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -178,7 +152,6 @@ CMakeFiles/agile_robotics_controller.dir/build: agile_robotics_controller
 .PHONY : CMakeFiles/agile_robotics_controller.dir/build
 
 CMakeFiles/agile_robotics_controller.dir/requires: CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o.requires
-CMakeFiles/agile_robotics_controller.dir/requires: CMakeFiles/agile_robotics_controller.dir/code/include/config_parse2.cpp.o.requires
 CMakeFiles/agile_robotics_controller.dir/requires: CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o.requires
 CMakeFiles/agile_robotics_controller.dir/requires: CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o.requires
 
