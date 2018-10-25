@@ -13,17 +13,17 @@
 //	Custom made header files
 #include "model_config_data.hpp"
 #include "system_defines.hpp"
-#include "device_control.cu"
+#include "device_control.cpp"
 
-void generate_model(std::shared_ptr<NeuralModel> neuralModel) {
+void generate_model(std::shared_ptr<SimulationModel> simmodel_ptr) {
 	// Transfer model configuration into the GPU cache
-	neuralModel->transferOrganism();
+	simmodel_ptr->transferOrganism();
 };
 
 
 int main(int argc, char** argv){
 	/*	Creating the vector for the class and allocate the room for the vector.	*/
-	std::shared_ptr<NeuralModel> neuralModelMain = std::make_shared<NeuralModel>();
+	std::shared_ptr<SimulationModel> SimulationModelMain = std::make_shared<SimulationModel>();
 	
 	// Is file valid to open
 /*	if (argc != 2) {
@@ -32,9 +32,13 @@ int main(int argc, char** argv){
 		return 1;
 	}
 */
-
-	neuralModelMain->parse_config_file();
-	generate_model(neuralModelMain);
+	int comp;
+	comp = SimulationModelMain->parse_config_file();
+	if (comp != 0) {
+		// Exit on this error
+		return 1;
+	}
+	generate_model(SimulationModelMain);
 
 	/*
     Organisms organism;
