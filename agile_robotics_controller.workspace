@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeLite_Workspace Name="agile_robotics_controller">
+  <Project Name="agile_robotics_controller" Path="agile_robotics_controller.project" Active="Yes"/>
+  <BuildMatrix>
+    <WorkspaceConfiguration Name="Debug" Selected="yes">
+      <Environment/>
+      <Project Name="agile_robotics_controller" ConfigName="Debug"/>
+    </WorkspaceConfiguration>
+  </BuildMatrix>
+</CodeLite_Workspace>

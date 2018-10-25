@@ -1,0 +1,1 @@
+/usr/local/cuda-9.0/bin/nvcc    -Wall -Werror -std=c++17 -g   CMakeFiles/agile_robotics_controller.dir/code/include/config_parse.cpp.o CMakeFiles/agile_robotics_controller.dir/code/include/main.cpp.o CMakeFiles/agile_robotics_controller.dir/code/include/pugixml.cpp.o  -o agile_robotics_controller 

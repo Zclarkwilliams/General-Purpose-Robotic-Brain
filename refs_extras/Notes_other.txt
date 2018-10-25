@@ -1,0 +1,2 @@
+// If permission to output file denied when compiling enter the following command to giver permission to the directory
+sudo chown -R "$USER:" /path/to/dir

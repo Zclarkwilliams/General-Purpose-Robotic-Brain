@@ -1,0 +1,79 @@
+/*
+*	CMake Notes
+*
+* 	**All notes and info below are sourced from the following URL:
+* 
+*	https://tuannguyen68.gitbooks.io/learning-cmake-a-beginner-s-guide/content/*	chap1/chap1.html
+*
+*	or
+*
+* (Better)https://cgold.readthedocs.io/en/latest/tutorials.html 
+*/
+
+/****************************************\
+*
+*	CMake Global Variable
+*
+\****************************************/
+
+
+// Make sure you fully understand what each variable means in other scenarios:
+
+CMAKE_SOURCE_DIR/CMAKE_BINARY_DIR -> these variables point to the root of the source/binary trees. If your project will be added to another project as a subproject by add_subdirectory, the locations like ${CMAKE_SOURCE_DIR}/my-resource.txt will point to <top-level>/my-resource.txt instead of <my-project>/my-resource.txt
+
+PROJECT_SOURCE_DIR/PROJECT_BINARY_DIR -> these variables are better then previous but still have kind of a global nature. You should change all paths related to PROJECT_SOURCE_DIR if you decide to move declaration of your project or decide to detach some part of the code and add new project command in the middle of the source tree. Consider using extra variable with clean separate purpose for such job set(FOO_MY_RESOURCES "${CMAKE_CURRENT_LIST_DIR}/resources") instead of referring to ${PROJECT_SOURCE_DIR}/resources.
+
+CMAKE_CURRENT_SOURCE_DIR -> this is a directory with CMakeLists.txt. If you’re using this variable internally you can substitute is with CMAKE_CURRENT_LIST_DIR. In case you’re creating module for external usage consider moving all functionality to function.
+
+
+CMAKE_BINARY_DIR	-> When building in-source, this is equivalent to
+		    	   CMAKE_SOURCE_DIR, otherwise this is the top level 
+			   directory of your build tree.
+
+CMAKE_SOURCE_DIR	-> This is the directory from which CMake was stared, i.e. 
+			   the top level source directory.
+
+CMAKE_CURRENT_SOURCE_DIR-> This will hold the path to currently processed node 
+
+EXECUTABLE_OUTPUT_PATH	-> Set this Variable to specify a common place where CMake 
+			   should put all executable files.
+			   (instead of CMAKE_CURRENT_BINARY_DIR)
+			   
+			   example: 
+			   > SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+
+LIBARARY_OUTPUT_PATH	-> Set this variable to specify a common place where CMake 
+			   should put all libraries.
+			   (instead of CMAKE_CURRENT_BINARY_DIR).
+			   
+			   example: 
+			   > SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib)
+
+PROJECT_NAME		-> The name of the project set by PROJECT() command.
+
+PROJECT_SOURCE_DIR	-> Contains the full path to the root of your project souce 
+			   directory, i.e. to nearest dir where CMakeLists.txt 
+			   contains the PROJECT() command. Now,  you have to 
+			   compile the main.cpp. The way to do this task is too 
+			   simple.
+
+			   example: 
+			   > add_executable(hello ${PROJECT_SOURCE_DIR}/test.cpp)
+
+/****************************************\
+*
+*   Build the source code with CMake
+*
+\****************************************/
+
+# First - Create CMake configuration files inside folder 'build'
+	
+	$ sudo cmake -H. -Bbuild
+
+# Second - Generate the output program, or binary executable, for the project 	
+	   specified by PROJECT_SOURCE_DIR and store it in the folder spcified by 
+	   CMAKE_BINARY_DIR folder.
+
+	$ sudo cmake --build build -- -j3
+
+
