@@ -9,7 +9,7 @@
 #include <iostream>
 
 // Non-Standard Libraries
-#include "model_config_data.hpp"
+#include "config_data.hpp"
 
 //#include <cuda.h>
 //#include <cuda_runtime_api.h>

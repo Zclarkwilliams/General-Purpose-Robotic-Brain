@@ -660,7 +660,10 @@ void SimulationModel::transferOrganism() {
 		
 		//cudaFree(orgvect);
 
-		getOrgData(neur_ptr);
+		double * I_app;
+		std::string stimulated_neuron;
+
+		getOrgData(org_ptr, stimulated_neuron, I_app, false);
 
 		// Organism specific data aquisition and transfer
 		std::string temp_org_id		= org_ptr->organism_id;
